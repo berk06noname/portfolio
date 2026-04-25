@@ -7,36 +7,53 @@
 
   <style>
     html, body {
-      height: 100%;
       margin: 0;
       background: #fff;
       font-family: Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
-    /* Dikey + yatay ortalama */
+    /* İSİM ALANI (DAHA KOMPAKT) */
     .intro {
       height: 100vh;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
-      text-align: center;
+
+      /* boşluğu azaltan kritik ayar */
+      padding: 0;
     }
 
     .name {
-      font-size: 42px;
-      line-height: 1.2;
+      text-align: center;
+      line-height: 1.05; /* boşluğu ciddi azaltır */
+      
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeIn 0.9s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .regular {
       font-weight: 400;
+      font-size: 42px;
+      margin: 0; /* boşluk sıfır */
     }
 
     .bold {
       font-weight: 700;
+      font-size: 42px;
+      margin: 0; /* boşluk sıfır */
     }
 
-    /* Görseller */
+    /* GÖRSELLER */
     .container {
       max-width: 900px;
       margin: 0 auto;
@@ -45,13 +62,13 @@
 
     img {
       width: 92%;
-      margin: 20px auto;
+      margin: 18px auto;
       display: block;
       border-radius: 12px;
 
       opacity: 0;
-      transform: translateY(30px);
-      transition: all 0.7s ease;
+      transform: translateY(25px);
+      transition: all 0.6s ease;
     }
 
     img.show {
@@ -60,14 +77,14 @@
     }
 
     img:active {
-      transform: scale(1.04);
+      transform: scale(1.03);
     }
   </style>
 </head>
 
 <body>
 
-  <!-- INTRO (isim ekranı) -->
+  <!-- İSİM -->
   <div class="intro">
     <div class="name">
       <div class="regular">Beril</div>
