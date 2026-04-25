@@ -11,24 +11,21 @@
       background: #fff;
       font-family: Helvetica, Arial, sans-serif;
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
 
-    /* İSİM ALANI (DAHA KOMPAKT) */
+    /* İSİM BLOĞU: artık dev boşluk yok */
     .intro {
-      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-
-      /* boşluğu azaltan kritik ayar */
-      padding: 0;
+      padding: 40px 0 20px 0; /* ❗ azaltıldı */
     }
 
     .name {
       text-align: center;
-      line-height: 1.05; /* boşluğu ciddi azaltır */
-      
+      line-height: 1.0;
+      margin: 0;
+
       opacity: 0;
       transform: translateY(10px);
       animation: fadeIn 0.9s ease forwards;
@@ -41,17 +38,14 @@
       }
     }
 
-    .regular {
-      font-weight: 400;
+    .regular, .bold {
       font-size: 42px;
-      margin: 0; /* boşluk sıfır */
+      margin: 0;
+      padding: 0;
     }
 
-    .bold {
-      font-weight: 700;
-      font-size: 42px;
-      margin: 0; /* boşluk sıfır */
-    }
+    .regular { font-weight: 400; }
+    .bold { font-weight: 700; }
 
     /* GÖRSELLER */
     .container {
@@ -62,13 +56,13 @@
 
     img {
       width: 92%;
-      margin: 18px auto;
+      margin: 16px auto;
       display: block;
       border-radius: 12px;
 
       opacity: 0;
-      transform: translateY(25px);
-      transition: all 0.6s ease;
+      transform: translateY(15px);
+      transition: all 0.8s ease;
     }
 
     img.show {
