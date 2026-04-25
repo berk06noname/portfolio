@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio</title>
+
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+    }
+
+    img {
+      width: 92%;
+      margin: 20px auto;
+      display: block;
+      border-radius: 12px;
+
+      /* başlangıç durumu */
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.7s ease;
+    }
+
+    /* görünür olunca */
+    img.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* dokunma efekti (mobil) */
+    img:active {
+      transform: scale(1.04);
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <img src="resim1.jpg">
+  <img src="resim2.jpg">
+  <img src="resim3.jpg">
+  <img src="resim4.jpg">
+</div>
+
+<script>
+  const images = document.querySelectorAll("img");
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("show");
+      }
+    });
+  });
+
+  images.forEach(img => {
+    observer.observe(img);
+  });
+</script>
+
+</body>
+</html>
