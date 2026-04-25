@@ -6,22 +6,41 @@
   <title>Portfolio</title>
 
   <style>
-    html {
-      scroll-behavior: smooth;
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: #fff;
+      font-family: Helvetica, Arial, sans-serif;
     }
 
-    body {
-      margin: 0;
-      background: #ffffff;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    /* Dikey + yatay ortalama */
+    .intro {
+      height: 100vh;
       display: flex;
       flex-direction: column;
+      justify-content: center;
       align-items: center;
+      text-align: center;
     }
 
+    .name {
+      font-size: 42px;
+      line-height: 1.2;
+    }
+
+    .regular {
+      font-weight: 400;
+    }
+
+    .bold {
+      font-weight: 700;
+    }
+
+    /* Görseller */
     .container {
-      width: 100%;
       max-width: 900px;
+      margin: 0 auto;
+      padding-bottom: 40px;
     }
 
     img {
@@ -30,19 +49,16 @@
       display: block;
       border-radius: 12px;
 
-      /* başlangıç durumu */
       opacity: 0;
       transform: translateY(30px);
       transition: all 0.7s ease;
     }
 
-    /* görünür olunca */
     img.show {
       opacity: 1;
       transform: translateY(0);
     }
 
-    /* dokunma efekti (mobil) */
     img:active {
       transform: scale(1.04);
     }
@@ -51,28 +67,35 @@
 
 <body>
 
-<div class="container">
-  <img src="resim1.jpg">
-  <img src="resim2.jpg">
-  <img src="resim3.jpg">
-  <img src="resim4.jpg">
-</div>
+  <!-- INTRO (isim ekranı) -->
+  <div class="intro">
+    <div class="name">
+      <div class="regular">Beril</div>
+      <div class="bold">Çekmez</div>
+    </div>
+  </div>
 
-<script>
-  const images = document.querySelectorAll("img");
+  <!-- GÖRSELLER -->
+  <div class="container">
+    <img src="resim1.jpg">
+    <img src="resim2.jpg">
+    <img src="resim3.jpg">
+    <img src="resim4.jpg">
+  </div>
 
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("show");
-      }
+  <script>
+    const images = document.querySelectorAll("img");
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("show");
+        }
+      });
     });
-  });
 
-  images.forEach(img => {
-    observer.observe(img);
-  });
-</script>
+    images.forEach(img => observer.observe(img));
+  </script>
 
 </body>
 </html>
