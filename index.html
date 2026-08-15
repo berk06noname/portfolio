@@ -192,9 +192,9 @@
   var db = firebase.firestore();
   
   // 4 haneli rastgele şifre üreten fonksiyon
-function generatePasscode() {
-  return Math.floor(1000 + Math.random() * 9000).toString();
-}
+  function generatePasscode() {
+    return Math.floor(1000 + Math.random() * 9000).toString();
+  }
 
   // 3. Kodunuzu Firestore'a Bağlayan Adaptör
   window.storage = {
@@ -210,11 +210,11 @@ function generatePasscode() {
         return null;
       }
     },
-    
     set: async function(key, value) {
       try {
         var data = typeof value === 'string' ? JSON.parse(value) : value;
-        await db.collection("projects").doc(key).set(data);
+        var cleanData = JSON.parse(JSON.stringify(data));
+        await db.collection("projects").doc(key).set(cleanData);
         return true;
       } catch (e) {
         console.error("Firebase yazma hatası:", e);
@@ -553,294 +553,89 @@ function generatePasscode() {
       '<p class="field-label" style="margin-top:0;">Özet</p>' +
       '<ul class="summary-list">' +
         '<li>Renk: ' + (fb.color ? fb.color : 'Orijinal') + '</li>' +
-        '<li>Font: ' + (fb.font ? esc(fb.font) : 'Orijinal') + '</li>' +
-        '<li>İşaretleme sayısı: ' + fb.markers.length + '</li>' +
-        (fb.comment ? '<li>Not: "' + esc(fb.comment) + '"</li>' : '') +
+        (fb.font ? '<li>Font: ' + esc(fb.font) + '</li>' : '') +
+        (fb.markers && fb.markers.length ? '<li>İşaretleme sayısı: ' + fb.markers.length + '</li>' : '') +
       '</ul>' +
     '</div>';
   }
 
-  function render() {
-    var html = renderHeader() + '<main class="shell">';
-    switch (state.screen) {
-      case 'home': html += renderHome(); break;
-      case 'designerDashboard': html += renderDesignerDashboard(); break;
-      case 'designerNew': html += renderDesignerNew(); break;
-      case 'designerDetail': html += renderDesignerDetail(); break;
-      case 'clientEnter': html += renderClientEnter(); break;
-      case 'clientReview': html += renderClientReview(); break;
-      case 'clientDone': html += renderClientDone(); break;
-    }
-    html += '</main>';
-    APP.innerHTML = html;
-    if (state.screen === 'clientReview' && state.review && state.review.pendingMarker) {
-      var ta = document.getElementById('markerNoteInput');
-      if (ta) { ta.focus(); }
-    }
-  }
-
-  async function loadAllProjects() {
-    state.loading = true; state.error = null; render();
+  // Tasarımcı panelinden bir projeye tıklandığında şifre sorma özelliği
+  async function handleOpenDesignerProject(code) {
     try {
-      var listRes = await window.storage.list('project:', true);
-      var keys = (listRes && listRes.keys) || [];
-      var items = [];
-      for (var i = 0; i < keys.length; i++) {
-        try {
-          var r = await window.storage.get(keys[i], true);
-          if (r && r.value) items.push(JSON.parse(r.value));
-        } catch (e) {}
-      }
-      items.sort(function (a, b) { return (b.createdAt || 0) - (a.createdAt || 0); });
-      state.designerProjects = items;
-    } catch (e) {
-      state.error = 'Projeler yüklenirken bir sorun oluştu.';
-    }
-    state.loading = false;
-    render();
-  }
+      var res = await window.storage.get('project:' + code);
+      if (!res || !res.value) return;
+      var project = JSON.parse(res.value);
 
-  async function openDesignerDetail(code) {
-    state.loading = true; state.error = null; render();
-    try {
-      var r = await window.storage.get('project:' + code, true);
-      if (!r || !r.value) {
-        state.error = 'Proje bulunamadı.'; state.screen = 'designerDashboard'; state.loading = false; render(); return;
-      }
-      state.activeProject = JSON.parse(r.value);
-      state.activeCode = code;
-      state.screen = 'designerDetail';
-    } catch (e) {
-      state.error = 'Proje yüklenirken hata oluştu.';
-    }
-    state.loading = false;
-    render();
-  }
-
-  async function handleCreateProject() {
-    var nameInput = document.getElementById('projectNameInput');
-    var name = nameInput ? nameInput.value.trim() : '';
-    if (!name) { newProjectDraft.error = 'Lütfen müşteri ya da proje adı girin.'; render(); return; }
-    if (!newProjectDraft.svgRaw) { newProjectDraft.error = 'Lütfen bir SVG logo dosyası yükleyin.'; render(); return; }
-    state.loading = true; newProjectDraft.error = null; render();
-    try {
-      var code = await generateUniqueCode();
-      var passcode = generatePasscode(); // 4 haneli rastgele şifre üretiliyor
-      
-      var project = { 
-        code: code, 
-        passcode: passcode, // Şifre projeye eklendi
-        name: name, 
-        svgContent: newProjectDraft.svgRaw, 
-        createdAt: Date.now(), 
-        status: 'pending', 
-        feedback: null 
-      };
-      
-      await window.storage.set('project:' + code, JSON.stringify(project), true);
-      state.activeProject = project;
-      state.activeCode = code;
-      state.screen = 'designerDetail';
-      newProjectDraft = { name: '', svgRaw: null, fileName: '', error: null };
-      
-      // Şifreyi bildirim ekranında size gösterir
-      alert('Proje Oluşturuldu!\n\nProje Kodu: ' + code + '\nGiriş Şifresi: ' + passcode);
-    } catch (e) {
-      newProjectDraft.error = 'Proje oluşturulurken bir sorun oluştu, tekrar deneyin.';
-    }
-    state.loading = false;
-    render();
-  }
-
-  function handleFileSelect(e) {
-    var file = e.target.files && e.target.files[0];
-    if (!file) return;
-    if (!/\.svg$/i.test(file.name)) {
-      newProjectDraft.error = 'Lütfen bir .svg dosyası seçin.';
-      render();
-      return;
-    }
-    var reader = new FileReader();
-    reader.onload = function (ev) {
-      var raw = String(ev.target.result || '');
-      if (raw.indexOf('<svg') === -1) {
-        newProjectDraft.error = 'Dosya geçerli bir SVG içermiyor gibi görünüyor.';
-        newProjectDraft.svgRaw = null;
-      } else {
-        newProjectDraft.svgRaw = sanitizeSvg(raw);
-        newProjectDraft.fileName = file.name;
-        newProjectDraft.error = null;
-      }
-      render();
-    };
-    reader.onerror = function () { newProjectDraft.error = 'Dosya okunamadı.'; render(); };
-    reader.readAsText(file);
-  }
-
-  function handleCopyCode(el) {
-    var code = el.getAttribute('data-code');
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(code).then(function () {
-        var label = el.querySelector('.copy-label');
-        if (label) {
-          var orig = label.textContent;
-          label.textContent = 'Kopyalandı ✓';
-          setTimeout(function () { label.textContent = orig; }, 1500);
+      // Tasarımcının şifreyi girmesini isteme
+      if (project.passcode) {
+        var enteredPass = prompt("Bu projeyi açmak için giriş şifresini girin:");
+        if (enteredPass !== project.passcode) {
+          alert("Hatalı şifre!");
+          return;
         }
-      }).catch(function () {});
-    }
-  }
-
-  async function loadProjectByCode(code) {
-    state.loading = true; state.error = null; render();
-    try {
-      var r = await window.storage.get('project:' + code, true);
-      if (!r || !r.value) {
-        state.error = 'Kod bulunamadı. Lütfen tasarımcınızdan aldığınız kodu kontrol edin.';
-        state.loading = false; render(); return;
       }
-      var project = JSON.parse(r.value);
-      var hasText = detectHasText(project.svgContent);
+
       state.activeProject = project;
       state.activeCode = code;
-      var fbMarkers = (project.feedback && project.feedback.markers) ? project.feedback.markers.map(function (m) { return { id: m.id, x: m.x, y: m.y, note: m.note }; }) : [];
-      var nextId = 1;
-      for (var i = 0; i < fbMarkers.length; i++) { if (fbMarkers[i].id >= nextId) nextId = fbMarkers[i].id + 1; }
-      state.review = {
-        color: project.feedback ? project.feedback.color : null,
-        font: project.feedback ? project.feedback.font : null,
-        markers: fbMarkers,
-        nextMarkerId: nextId,
-        pendingMarker: null,
-        hasText: hasText
-      };
-      state.screen = 'clientReview';
+      state.screen = 'designerDetail';
+      render();
     } catch (e) {
-      state.error = 'Kod bulunamadı ya da bir bağlantı sorunu oluştu.';
-    }
-    state.loading = false;
-    render();
-  }
-
-  function handleViewClientProject() {
-    var input = document.getElementById('codeInput');
-    var code = input ? input.value.trim() : '';
-    if (code.length < 4) { state.error = 'Lütfen 6 haneli kodu eksiksiz girin.'; render(); return; }
-    loadProjectByCode(code);
-  }
-
-  function handleCanvasClick(e, canvasEl) {
-    if (state.review.pendingMarker) return;
-    var rect = canvasEl.getBoundingClientRect();
-    var x = ((e.clientX - rect.left) / rect.width) * 100;
-    var y = ((e.clientY - rect.top) / rect.height) * 100;
-    x = Math.min(96, Math.max(4, x));
-    y = Math.min(92, Math.max(8, y));
-    state.review.pendingMarker = { x: x, y: y, note: '', editingId: null };
-    render();
-  }
-
-  function handlePinClick(e, pinEl) {
-    var id = Number(pinEl.getAttribute('data-id'));
-    var marker = state.review.markers.find(function (m) { return m.id === id; });
-    if (!marker) return;
-    state.review.pendingMarker = { x: marker.x, y: marker.y, note: marker.note, editingId: marker.id };
-    render();
-  }
-
-  function handleMarkerSave() {
-    var ta = document.getElementById('markerNoteInput');
-    var note = ta ? ta.value.trim() : '';
-    var pm = state.review.pendingMarker;
-    if (!note) { state.review.pendingMarker = null; render(); return; }
-    if (pm.editingId) {
-      var m = state.review.markers.find(function (m) { return m.id === pm.editingId; });
-      if (m) m.note = note;
-    } else {
-      state.review.markers.push({ id: state.review.nextMarkerId++, x: pm.x, y: pm.y, note: note });
-    }
-    state.review.pendingMarker = null;
-    render();
-  }
-
-  function handleMarkerDelete(idStr) {
-    var id = Number(idStr);
-    state.review.markers = state.review.markers.filter(function (m) { return m.id !== id; });
-    render();
-  }
-
-  async function submitDecision(decision) {
-    var commentEl = document.getElementById('generalComment');
-    var comment = commentEl ? commentEl.value.trim() : '';
-    var feedback = {
-      color: state.review.color,
-      font: state.review.font,
-      markers: state.review.markers,
-      comment: comment,
-      decision: decision,
-      submittedAt: Date.now()
-    };
-    var project = state.activeProject;
-    project.status = decision === 'approved' ? 'approved' : 'revision';
-    project.feedback = feedback;
-    state.loading = true; state.error = null; render();
-    try {
-      await window.storage.set('project:' + state.activeCode, JSON.stringify(project), true);
-      state.activeProject = project;
-      state.screen = 'clientDone';
-    } catch (e) {
-      state.error = 'Gönderilirken bir sorun oluştu, lütfen tekrar deneyin.';
-    }
-    state.loading = false;
-    render();
-  }
-
-  function handleAppClick(e) {
-    var actionEl = e.target.closest('[data-action]');
-    if (!actionEl) return;
-    var action = actionEl.getAttribute('data-action');
-    switch (action) {
-      case 'go-home': state.screen = 'home'; state.error = null; render(); break;
-      case 'go-designer': state.screen = 'designerDashboard'; loadAllProjects(); break;
-      case 'go-client': state.screen = 'clientEnter'; state.error = null; render(); break;
-      case 'new-project': newProjectDraft = { name: '', svgRaw: null, fileName: '', error: null }; state.screen = 'designerNew'; state.error = null; render(); break;
-      case 'open-project': openDesignerDetail(actionEl.getAttribute('data-code')); break;
-      case 'back-dashboard': state.screen = 'designerDashboard'; loadAllProjects(); break;
-      case 'create-project': handleCreateProject(); break;
-      case 'copy-code': handleCopyCode(actionEl); break;
-      case 'view-client-project': handleViewClientProject(); break;
-      case 'reset-color': state.review.color = null; render(); break;
-      case 'swatch': state.review.color = actionEl.getAttribute('data-color'); render(); break;
-      case 'reset-font': state.review.font = null; render(); break;
-      case 'canvas-click': handleCanvasClick(e, actionEl); break;
-      case 'pin-click': handlePinClick(e, actionEl); break;
-      case 'marker-delete': handleMarkerDelete(actionEl.getAttribute('data-id')); break;
-      case 'marker-save': handleMarkerSave(); break;
-      case 'marker-cancel': state.review.pendingMarker = null; render(); break;
-      case 'decision-approve': submitDecision('approved'); break;
-      case 'decision-revise': submitDecision('revision'); break;
+      alert("Proje yüklenirken bir hata oluştu.");
     }
   }
 
-  function handleAppChange(e) {
-    if (e.target.id === 'customColorInput') { state.review.color = e.target.value; render(); }
-    else if (e.target.id === 'fontSelect') { state.review.font = e.target.value === 'original' ? null : e.target.value; render(); }
-    else if (e.target.id === 'svgFileInput') { handleFileSelect(e); }
+  function render() {
+    var content = '';
+    if (state.screen === 'home') content = renderHome();
+    else if (state.screen === 'designerDash') content = renderDesignerDashboard();
+    else if (state.screen === 'designerNew') content = renderDesignerNew();
+    else if (state.screen === 'designerDetail') content = renderDesignerDetail();
+    else if (state.screen === 'clientEnter') content = renderClientEnter();
+    else if (state.screen === 'clientReview') content = renderClientReview();
+    else if (state.screen === 'clientDone') content = renderClientDone();
+
+    APP.innerHTML = renderHeader() + '<main class="shell">' + content + '</main>';
   }
 
-  function handleAppInput(e) {
-    if (e.target.id === 'codeInput') {
-      e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+  // Örnek tıklama olay yöneticisi (Event listener)
+  document.addEventListener('click', function(e) {
+    var target = e.target.closest('[data-action]');
+    if (!target) return;
+    var action = target.getAttribute('data-action');
+
+    if (action === 'go-home') { state.screen = 'home'; render(); }
+    else if (action === 'go-designer') { state.screen = 'designerDash'; loadDesignerProjects(); }
+    else if (action === 'go-client') { state.screen = 'clientEnter'; render(); }
+    else if (action === 'new-project') { state.screen = 'designerNew'; render(); }
+    else if (action === 'back-dashboard') { state.screen = 'designerDash'; loadDesignerProjects(); }
+    else if (action === 'open-project') {
+      var code = target.getAttribute('data-code');
+      handleOpenDesignerProject(code);
     }
-  }
-
-  APP.addEventListener('click', handleAppClick);
-  APP.addEventListener('change', handleAppChange);
-  APP.addEventListener('input', handleAppInput);
-  APP.addEventListener('keydown', function (e) {
-    if (e.target && e.target.id === 'codeInput' && e.key === 'Enter') handleViewClientProject();
   });
 
+  async function loadDesignerProjects() {
+    state.loading = true;
+    render();
+    try {
+      var listRes = await window.storage.list('project:');
+      var keys = listRes.keys || [];
+      var projects = [];
+      for (var i = 0; i < keys.length; i++) {
+        var item = await window.storage.get(keys[i]);
+        if (item && item.value) {
+          projects.push(JSON.parse(item.value));
+        }
+      }
+      state.designerProjects = projects.sort(function(a, b) { return b.createdAt - a.createdAt; });
+    } catch (e) {
+      state.error = "Projeler yüklenemedi.";
+    }
+    state.loading = false;
+    render();
+  }
+
+  // İlk açılış
   render();
 </script>
 </body>
