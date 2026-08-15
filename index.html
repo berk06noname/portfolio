@@ -18,21 +18,19 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            padding: 20px 10px;
-            transition: padding 0.2s ease;
+            padding: 0; /* Kenar boşlukları tamamen kaldırıldı */
         }
 
         .main-container {
             background-color: #ffffff;
             width: 100%;
-            /* Varsayılan genişlik (JavaScript otomatik güncelleyecek) */
-            max-width: 680px; 
+            max-width: none; /* Sınırlama tamamen kaldırıldı, tam ekran yapar */
             padding: 24px;
             display: flex;
             flex-direction: column;
             gap: 18px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            transition: max-width 0.2s ease, padding 0.2s ease;
+            box-shadow: none; /* Tam ekranda gölgeye gerek kalmaz */
+            min-height: 100vh; /* Ekranı dikeyde de tamamen doldurur */
         }
 
         .box {
@@ -419,48 +417,6 @@
     </div>
 
     <script>
-        const mainContainer = document.getElementById('mainContainer');
-
-        /* OTOMATİK ÇÖZÜNÜRLÜK HESAPLAYICI ENGINE */
-        function calculateAutoLayout() {
-            const screenWidth = window.innerWidth;
-            const screenHeight = window.innerHeight;
-            const body = document.body;
-
-            // 1. Ekran Genişliğine göre Kutunun Genişliğini Dinamik Hesapla
-            if (screenWidth > 1400) {
-                mainContainer.style.maxWidth = '850px';
-                body.style.padding = '40px 20px';
-            } else if (screenWidth > 992) {
-                mainContainer.style.maxWidth = '750px';
-                body.style.padding = '30px 20px';
-            } else if (screenWidth > 576) {
-                mainContainer.style.maxWidth = '640px';
-                body.style.padding = '20px 15px';
-            } else {
-                mainContainer.style.maxWidth = '100%';
-                body.style.padding = '12px 8px';
-            }
-
-            // 2. Ekran Yüksekliğine göre Dikey Konumlandırmayı Hesapla
-            const containerHeight = mainContainer.scrollHeight;
-            if (screenHeight > containerHeight + 60) {
-                body.style.alignItems = 'center'; // Dikeyde tam ortala
-            } else {
-                body.style.alignItems = 'flex-start'; // Sıkışırsa yukarıdan başlat
-            }
-        }
-
-        // Sayfa yüklendiğinde ve ekran her değiştiğinde otomatik çalıştır
-        window.addEventListener('resize', calculateAutoLayout);
-        window.addEventListener('load', calculateAutoLayout);
-
-        // ResizeObserver: Kutu boyutu değiştikçe anlık yeniden hesapla
-        const observer = new ResizeObserver(() => {
-            calculateAutoLayout();
-        });
-        observer.observe(mainContainer);
-
         // Photoshop Renk Paneli Kodları
         const mainLogoContainer = document.getElementById('mainLogoContainer');
         const psPickerBox = document.getElementById('psPickerBox');
@@ -481,7 +437,6 @@
 
         psPickerToggle.addEventListener('click', function() {
             psPickerBox.classList.toggle('is-open');
-            setTimeout(calculateAutoLayout, 400); // Panel açılınca çözünürlük hesabını güncelle
         });
 
         partButtons.forEach(btn => {
