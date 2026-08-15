@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mobil Logo Sunumu - Çoklu Yıldız & Renk Seçimi</title>
+    <title>Mobil Logo Sunumu - Çoklu Yıldız & Sınırsız Renk</title>
     <style>
         /* Genel Sıfırlama */
         * {
@@ -82,7 +82,8 @@
         .star-icon {
             width: 65px;
             height: 65px;
-            transition: fill 0.5s cubic-bezier(0.25, 1, 0.5, 1), transform 0.3s ease;
+            /* Renk geçişini sınırsız palet için sıfırlıyoruz ki anlık tepki versin */
+            transition: transform 0.3s ease;
             display: block;
         }
 
@@ -95,52 +96,46 @@
             transform: scale(1.08) rotate(5deg);
         }
 
-        /* --- PRO RENK PALETİ ANİMASYONU --- */
-        .color-box {
-            cursor: pointer;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent; 
-        }
-
-        .palette {
+        /* --- SINIRSIZ RENK SEÇİCİ (COLOR PICKER) --- */
+        .color-picker-wrapper {
+            position: relative;
             display: flex;
-            gap: 0; 
-            justify-content: center;
             align-items: center;
-            transition: gap 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            justify-content: center;
+            gap: 15px;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
         }
 
-        .color-box.is-open .palette {
-            gap: 16px; 
+        /* Temsili Renk Tekerleği İkonu */
+        .color-wheel {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transition: transform 0.2s ease;
         }
 
-        .color-swatch {
-            width: 0; 
-            height: 48px; 
-            border-radius: 14px; 
+        .color-picker-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .color-picker-wrapper:hover .color-wheel {
+            transform: scale(1.1);
+        }
+
+        /* Görünmez yapılan ama tıklanabilen gerçek input */
+        #nativeColorPicker {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             opacity: 0;
-            transform: scale(0.3); 
-            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: inset 0 0 0 2px rgba(0,0,0,0.08); 
-            border: 2px solid transparent;
-        }
-
-        .color-swatch.is-active {
-            width: 48px;
-            opacity: 1;
-            transform: scale(1);
-            border-color: rgba(0,0,0,0.15); 
-        }
-
-        .color-box.is-open .color-swatch {
-            width: 48px;
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .color-box.is-open .color-swatch:hover {
-            transform: scale(1.1) translateY(-4px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+            cursor: pointer;
         }
 
         /* --- TİPOGRAFİ ALANI STİLLERİ --- */
@@ -232,13 +227,13 @@
             </div>
         </div>
 
-        <!-- Pro İnteraktif Renk Paleti Alanı -->
-        <div class="box box-standard color-box" id="colorBox">
-            <div class="palette">
-                <div class="color-swatch is-active" style="background-color: #000000;" data-color="#000000"></div>
-                <div class="color-swatch" style="background-color: #8C8080;" data-color="#8C8080"></div>
-                <div class="color-swatch" style="background-color: #E60000;" data-color="#E60000"></div>
-                <div class="color-swatch" style="background-color: #DDE21A;" data-color="#DDE21A"></div>
+        <!-- Sınırsız Renk Paleti (Native Color Picker) Alanı -->
+        <div class="box box-standard">
+            <div class="color-picker-wrapper">
+                <div class="color-wheel"></div>
+                <span class="color-picker-text">Sınırsız Renk Seç</span>
+                <!-- Arka planda çalışan görünmez renk seçici -->
+                <input type="color" id="nativeColorPicker" value="#000000">
             </div>
         </div>
 
@@ -267,47 +262,31 @@
 
     </div>
 
-    <!-- Etkileşim ve Seçim Mantığı -->
+    <!-- Etkileşim ve Sınırsız Renk Seçim Mantığı -->
     <script>
-        const colorBox = document.getElementById('colorBox');
         const starContainers = document.querySelectorAll('.star-container');
-        const swatches = document.querySelectorAll('.color-swatch');
+        const nativeColorPicker = document.getElementById('nativeColorPicker');
 
-        // Aktif olarak seçilen yıldız (varsayılan olarak ortadaki büyük yıldız seçili başlasın)
+        // Aktif olarak seçilen yıldız (varsayılan olarak ortadaki büyük yıldız seçili)
         let activeStarContainer = document.querySelector('.star-container.selected');
 
         // Yıldızlara tıklama: Hangi yıldızın seçildiğini belirle ve etrafına belirginlik ver
         starContainers.forEach(container => {
-            container.addEventListener('click', function(e) {
-                e.stopPropagation(); // Renk paletinin açılmasını tetiklemesin
+            container.addEventListener('click', function() {
                 starContainers.forEach(c => c.classList.remove('selected'));
                 this.classList.add('selected');
                 activeStarContainer = this;
             });
         });
 
-        // Renk kutusuna ve renk paletine tıklama yönetimi
-        colorBox.addEventListener('click', function(event) {
-            const clickedSwatch = event.target.closest('.color-swatch');
+        // Sınırsız renk paletinde (color picker) renk değiştirildikçe (kaydırdıkça anlık tepki için 'input' olayı kullanılır)
+        nativeColorPicker.addEventListener('input', function(event) {
+            const selectedColor = event.target.value;
             
-            if (colorBox.classList.contains('is-open')) {
-                if (clickedSwatch) {
-                    // 1. Seçilen rengi al
-                    const selectedColor = clickedSwatch.getAttribute('data-color');
-                    
-                    // 2. SADECE aktif (seçili) olan yıldızın rengini güncelle
-                    if (activeStarContainer) {
-                        const starIcon = activeStarContainer.querySelector('.star-icon');
-                        starIcon.setAttribute('fill', selectedColor);
-                    }
-                    
-                    // 3. Aktif renk paleti kutucuğunu güncelle
-                    swatches.forEach(s => s.classList.remove('is-active'));
-                    clickedSwatch.classList.add('is-active');
-                }
-                colorBox.classList.remove('is-open');
-            } else {
-                colorBox.classList.add('is-open');
+            // SADECE aktif (seçili) olan yıldızın rengini güncelle
+            if (activeStarContainer) {
+                const starIcon = activeStarContainer.querySelector('.star-icon');
+                starIcon.setAttribute('fill', selectedColor);
             }
         });
     </script>
