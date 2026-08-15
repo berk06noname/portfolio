@@ -44,7 +44,6 @@
             width: 100%;
             background-color: #ffffff;
             position: relative;
-            overflow: hidden;
         }
 
         .box-logo {
@@ -88,6 +87,7 @@
             user-select: none;
             -webkit-tap-highlight-color: transparent;
             height: 100px;
+            overflow: hidden;
             transition: height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             background-color: #ffffff;
             flex-direction: column;
@@ -106,6 +106,7 @@
             width: 100%;
             height: 100px;
             padding: 0 20px;
+            flex-shrink: 0;
         }
 
         .ps-picker-header-left {
@@ -141,11 +142,13 @@
         .ps-picker-body {
             display: none;
             width: 100%;
+            height: 280px;
             padding: 12px;
             background-color: #f7f7f7;
             border-top: 2px solid #000000;
             flex-direction: column;
             gap: 12px;
+            flex-shrink: 0;
         }
 
         .ps-picker-box.is-open .ps-picker-body {
@@ -298,7 +301,7 @@
             font-weight: 400;
         }
 
-        /* --- İLETİŞİM ALANI (ÇİFT İKONlu KARE TASARIM) --- */
+        /* --- İLETİŞİM ALANI (ÇİFT İKONLU KARE TASARIM) --- */
         .contact-container {
             display: flex;
             align-items: center;
@@ -638,6 +641,7 @@
         window.addEventListener('touchend', () => { isDraggingHue = false; });
 
         // Geliştirilmiş HEX Input Dinleyicisi
+        psHexInput.value = '#330000';
         psHexInput.addEventListener('input', function() {
             let val = this.value.trim();
             if (!val.startsWith('#')) val = '#' + val;
