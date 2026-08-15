@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mobil Logo Sunumu - Çoklu Yıldız & Canlı Yuvarlak Renk Seçici</title>
+    <title>Mobil Logo Sunumu - Çoklu Yıldız & Illustrator Renk Çarkı</title>
     <style>
         /* Genel Sıfırlama */
         * {
@@ -73,7 +73,6 @@
             transition: background-color 0.2s ease;
         }
 
-        /* Seçilen yıldızın etrafındaki belirginlik efekti */
         .star-container.selected {
             background-color: rgba(0, 0, 0, 0.06);
             box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15);
@@ -95,47 +94,94 @@
             transform: scale(1.08) rotate(5deg);
         }
 
-        /* --- CANLI ÖNİZLEMELİ YUVARLAK RENK SEÇİCİ --- */
-        .color-picker-wrapper {
-            position: relative;
+        /* --- ADOBE ILLUSTRATOR TARZI YUVARLAK RENK ÇARKI --- */
+        .ai-wheel-box {
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            height: 100px;
+            transition: height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            background-color: #ffffff;
+            flex-direction: column;
+            padding: 0;
+            justify-content: flex-start;
+        }
+
+        .ai-wheel-box.is-open {
+            height: 270px; /* Panel açıldığında çarkın sığacağı yükseklik */
+        }
+
+        .ai-wheel-header {
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 15px;
+            justify-content: space-between;
             width: 100%;
-            height: 100%;
-            cursor: pointer;
+            height: 100px;
+            padding: 0 20px;
         }
 
-        /* Canlı önizleme yapan yuvarlak renk alanı (Arka planı seçilen renkle güncellenir) */
-        .color-wheel-live {
-            width: 48px;
-            height: 48px;
+        .ai-wheel-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Gerçek Yuvarlak Renk Çarkı İkonu */
+        .color-wheel-graphic {
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
-            background-color: #000000;
-            border: 2px solid rgba(0,0,0,0.15);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            transition: transform 0.2s ease, background-color 0.1s ease;
+            background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            border: 2px solid #000;
         }
 
-        .color-picker-text {
+        .ai-wheel-title {
             font-size: 1.1rem;
             font-weight: 600;
         }
 
-        .color-picker-wrapper:hover .color-wheel-live {
-            transform: scale(1.1);
+        .ai-wheel-arrow {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
         }
 
-        /* Görünmez gerçek input (Tıklandığında işletim sisteminin renk paleti açılır ve kaydırıldıkça canlı önizleme yapar) */
-        #nativeColorPicker {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .ai-wheel-box.is-open .ai-wheel-arrow {
+            transform: rotate(180deg);
+        }
+
+        /* Açılan Çark Alanı Gövdesi */
+        .ai-wheel-body {
+            display: none;
             width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
+            padding: 15px;
+            background-color: #f7f7f7;
+            border-top: 2px solid #000000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .ai-wheel-box.is-open .ai-wheel-body {
+            display: flex;
+        }
+
+        /* Illustrator Renk Tekerleği Kanvası */
+        #colorWheelCanvas {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            cursor: crosshair;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border: 2px solid #333;
+        }
+
+        .ai-wheel-info {
+            font-size: 0.9rem;
+            font-family: monospace;
+            font-weight: 700;
+            color: #333;
         }
 
         /* --- TİPOGRAFİ ALANI STİLLERİ --- */
@@ -186,17 +232,6 @@
             font-weight: 600;
             color: #000000;
         }
-
-        /* En alttaki çözünürlük yazısı */
-        .footer-text {
-            text-align: center;
-            font-size: 1.1rem;
-            font-weight: 500;
-            margin-top: auto; 
-            padding-top: 40px;
-            padding-bottom: 20px;
-            color: #000000;
-        }
     </style>
 </head>
 <body>
@@ -227,14 +262,19 @@
             </div>
         </div>
 
-        <!-- Canlı Önizlemeli Yuvarlak Renk Seçici Alanı -->
-        <div class="box box-standard">
-            <div class="color-picker-wrapper">
-                <!-- Canlı renk önizlemesi yapan yuvarlak alan -->
-                <div class="color-wheel-live" id="colorWheelLive"></div>
-                <span class="color-picker-text">Sınırsız Renk Seç</span>
-                <!-- Arkada çalışan canlı input -->
-                <input type="color" id="nativeColorPicker" value="#000000">
+        <!-- Adobe Illustrator Yuvarlak Renk Çarkı Alanı -->
+        <div class="box ai-wheel-box" id="aiWheelBox">
+            <div class="ai-wheel-header" id="aiWheelToggle">
+                <div class="ai-wheel-header-left">
+                    <div class="color-wheel-graphic"></div>
+                    <span class="ai-wheel-title">Adobe Renk Çarkı</span>
+                </div>
+                <span class="ai-wheel-arrow">▼</span>
+            </div>
+
+            <div class="ai-wheel-body">
+                <canvas id="colorWheelCanvas" width="140" height="140"></canvas>
+                <div class="ai-wheel-info" id="aiWheelHexText">HEX: #000000</div>
             </div>
         </div>
 
@@ -256,44 +296,130 @@
             </a>
         </div>
 
-        <!-- Alt Bilgi -->
-        <div class="footer-text">
-            iPhone 17 Pro Max Resolution
-        </div>
-
     </div>
 
-    <!-- Etkileşim ve Canlı Önizleme Mantığı -->
+    <!-- Illustrator Renk Çarkı ve Etkileşim Kodları -->
     <script>
         const starContainers = document.querySelectorAll('.star-container');
-        const nativeColorPicker = document.getElementById('nativeColorPicker');
-        const colorWheelLive = document.getElementById('colorWheelLive');
-
-        // Aktif olarak seçilen yıldız (varsayılan olarak ortadaki büyük yıldız seçili)
         let activeStarContainer = document.querySelector('.star-container.selected');
 
-        // Yıldızlara tıklama: Hangi yıldızın seçildiğini belirle ve etrafına belirginlik ver
+        // Yıldız seçimi
         starContainers.forEach(container => {
-            container.addEventListener('click', function() {
+            container.addEventListener('click', function(e) {
+                e.stopPropagation();
                 starContainers.forEach(c => c.classList.remove('selected'));
                 this.classList.add('selected');
                 activeStarContainer = this;
             });
         });
 
-        // Renk paletinde gezinirken (canlı olarak) hem yuvarlak dairenin rengini hem de seçili yıldızı güncelle
-        nativeColorPicker.addEventListener('input', function(event) {
-            const selectedColor = event.target.value;
-            
-            // 1. Yuvarlak butonun rengini canlı olarak güncelle
-            colorWheelLive.style.backgroundColor = selectedColor;
+        // Panel Açma / Kapatma
+        const aiWheelBox = document.getElementById('aiWheelBox');
+        const aiWheelToggle = document.getElementById('aiWheelToggle');
 
-            // 2. SADECE aktif (seçili) olan yıldızın rengini canlı olarak güncelle
-            if (activeStarContainer) {
-                const starIcon = activeStarContainer.querySelector('.star-icon');
-                starIcon.setAttribute('fill', selectedColor);
-            }
+        aiWheelToggle.addEventListener('click', function() {
+            aiWheelBox.classList.toggle('is-open');
         });
+
+        // Çark Çizimi ve İşlevselliği
+        const canvas = document.getElementById('colorWheelCanvas');
+        const ctx = canvas.getContext('2d');
+        const aiWheelHexText = document.getElementById('aiWheelHexText');
+        const radius = canvas.width / 2;
+
+        function drawColorWheel() {
+            const imageኮ = ctx.createImageData(canvas.width, canvas.height);
+            const data = imageኮ.data;
+
+            for (let x = 0; x < canvas.width; x++) {
+                for (let y = 0; y < canvas.height; y++) {
+                    let dx = x - radius;
+                    let dy = y - radius;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+
+                    let index = (y * canvas.width + x) * 4;
+
+                    if (distance <= radius) {
+                        let angle = Math.atan2(dy, dx) * (180 / Math.PI);
+                        if (angle < 0) angle += 360;
+                        let saturation = distance / radius;
+
+                        let [r, g, b] = hsvToRgb(angle, saturation * 100, 100);
+                        data[index] = r;
+                        data[index + 1] = g;
+                        data[index + 2] = b;
+                        data[index + 3] = 255;
+                    } else {
+                        data[index + 3] = 0; // Dış kısım şeffaf
+                    }
+                }
+            }
+            ctx.putImageData(imageኮ, 0, 0);
+        }
+
+        function hsvToRgb(h, s, v) {
+            s /= 100;
+            v /= 100;
+            let c = v * s;
+            let x = c * (1 - Math.abs((h / 60) % 2 - 1));
+            let m = v - c;
+            let r = 0, g = 0, b = 0;
+
+            if (0 <= h && h < 60) { r = c; g = x; b = 0; }
+            else if (60 <= h && h < 120) { r = x; g = c; b = 0; }
+            else if (120 <= h && h < 180) { r = 0; g = c; b = x; }
+            else if (180 <= h && h < 240) { r = 0; g = x; b = c; }
+            else if (240 <= h && h < 300) { r = x; g = 0; b = c; }
+            else if (300 <= h && h < 360) { r = c; g = 0; b = x; }
+
+            return [
+                Math.round((r + m) * 255),
+                Math.round((g + m) * 255),
+                Math.round((b + m) * 255)
+            ];
+        }
+
+        function rgbToHex(r, g, b) {
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+        }
+
+        function handleWheelClick(e) {
+            const rect = canvas.getBoundingClientRect();
+            let x = e.clientX - rect.left - radius;
+            let y = e.clientY - rect.top - radius;
+            let distance = Math.sqrt(x * x + y * y);
+
+            if (distance <= radius) {
+                let angle = Math.atan2(y, x) * (180 / Math.PI);
+                if (angle < 0) angle += 360;
+                let saturation = (distance / radius) * 100;
+
+                let [r, g, b] = hsvToRgb(angle, saturation, 100);
+                let hex = rgbToHex(r, g, b);
+
+                aiWheelHexText.innerText = `HEX: ${hex}`;
+
+                if (activeStarContainer) {
+                    activeStarContainer.querySelector('.star-icon').setAttribute('fill', hex);
+                }
+            }
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            handleWheelClick(e);
+            function onMouseMove(ev) { handleWheelClick(ev); }
+            function onMouseUp() {
+                window.removeEventListener('mousemove', onMouseMove);
+                window.removeEventListener('mouseup', onMouseUp);
+            }
+            window.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('mouseup', onMouseUp);
+        });
+
+        canvas.addEventListener('click', handleWheelClick);
+
+        // Çarkı oluştur
+        drawColorWheel();
     </script>
 
 </body>
