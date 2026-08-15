@@ -17,20 +17,22 @@
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
-            padding: 20px;
+            align-items: flex-start;
+            padding: 20px 10px;
+            transition: padding 0.2s ease;
         }
 
         .main-container {
             background-color: #ffffff;
             width: 100%;
-            max-width: 680px;
+            /* Varsayılan genişlik (JavaScript otomatik güncelleyecek) */
+            max-width: 680px; 
             padding: 24px;
             display: flex;
             flex-direction: column;
             gap: 18px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            transition: all 0.3s ease;
+            transition: max-width 0.2s ease, padding 0.2s ease;
         }
 
         .box {
@@ -189,7 +191,7 @@
             flex-wrap: wrap;
         }
 
-        /* Renk Matrisi (Kusursuz Kare) */
+        /* Renk Matrisi */
         .ps-color-square {
             width: 150px;
             height: 150px;
@@ -417,6 +419,49 @@
     </div>
 
     <script>
+        const mainContainer = document.getElementById('mainContainer');
+
+        /* OTOMATİK ÇÖZÜNÜRLÜK HESAPLAYICI ENGINE */
+        function calculateAutoLayout() {
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+            const body = document.body;
+
+            // 1. Ekran Genişliğine göre Kutunun Genişliğini Dinamik Hesapla
+            if (screenWidth > 1400) {
+                mainContainer.style.maxWidth = '850px';
+                body.style.padding = '40px 20px';
+            } else if (screenWidth > 992) {
+                mainContainer.style.maxWidth = '750px';
+                body.style.padding = '30px 20px';
+            } else if (screenWidth > 576) {
+                mainContainer.style.maxWidth = '640px';
+                body.style.padding = '20px 15px';
+            } else {
+                mainContainer.style.maxWidth = '100%';
+                body.style.padding = '12px 8px';
+            }
+
+            // 2. Ekran Yüksekliğine göre Dikey Konumlandırmayı Hesapla
+            const containerHeight = mainContainer.scrollHeight;
+            if (screenHeight > containerHeight + 60) {
+                body.style.alignItems = 'center'; // Dikeyde tam ortala
+            } else {
+                body.style.alignItems = 'flex-start'; // Sıkışırsa yukarıdan başlat
+            }
+        }
+
+        // Sayfa yüklendiğinde ve ekran her değiştiğinde otomatik çalıştır
+        window.addEventListener('resize', calculateAutoLayout);
+        window.addEventListener('load', calculateAutoLayout);
+
+        // ResizeObserver: Kutu boyutu değiştikçe anlık yeniden hesapla
+        const observer = new ResizeObserver(() => {
+            calculateAutoLayout();
+        });
+        observer.observe(mainContainer);
+
+        // Photoshop Renk Paneli Kodları
         const mainLogoContainer = document.getElementById('mainLogoContainer');
         const psPickerBox = document.getElementById('psPickerBox');
         const psPickerToggle = document.getElementById('psPickerToggle');
@@ -434,27 +479,10 @@
         let currentSaturation = 0;
         let currentBrightness = 0;
 
-        // Ekran ve içerik boyutunu okuyup body yüksekliğini akıllıca ayarlayan otomatik yapı
-        function checkScreenAndLayout() {
-            const body = document.body;
-            const container = document.getElementById('mainContainer');
-            
-            // Eğer içerik ekran yüksekliğinden büyükse body'yi esnek konuma getir
-            if (container.scrollHeight + 40 > window.innerHeight) {
-                body.style.alignItems = 'flex-start';
-            } else {
-                body.style.alignItems = 'center';
-            }
-        }
-
         psPickerToggle.addEventListener('click', function() {
             psPickerBox.classList.toggle('is-open');
-            // Panel açılıp kapanırken yükseklik değişimini anında hesapla
-            setTimeout(checkScreenAndLayout, 350);
+            setTimeout(calculateAutoLayout, 400); // Panel açılınca çözünürlük hesabını güncelle
         });
-
-        window.addEventListener('resize', checkScreenAndLayout);
-        window.addEventListener('load', checkScreenAndLayout);
 
         partButtons.forEach(btn => {
             btn.addEventListener('click', function() {
