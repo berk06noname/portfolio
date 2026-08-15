@@ -190,6 +190,11 @@
   // 2. Firebase ve Firestore'u Başlatma
   firebase.initializeApp(firebaseConfig);
   var db = firebase.firestore();
+  
+  // 4 haneli rastgele şifre üreten fonksiyon
+function generatePasscode() {
+  return Math.floor(1000 + Math.random() * 9000).toString();
+}
 
   // 3. Kodunuzu Firestore'a Bağlayan Adaptör
   window.storage = {
@@ -205,6 +210,7 @@
         return null;
       }
     },
+    
     set: async function(key, value) {
       try {
         var data = typeof value === 'string' ? JSON.parse(value) : value;
@@ -619,12 +625,26 @@
     state.loading = true; newProjectDraft.error = null; render();
     try {
       var code = await generateUniqueCode();
-      var project = { code: code, name: name, svgContent: newProjectDraft.svgRaw, createdAt: Date.now(), status: 'pending', feedback: null };
+      var passcode = generatePasscode(); // 4 haneli rastgele şifre üretiliyor
+      
+      var project = { 
+        code: code, 
+        passcode: passcode, // Şifre projeye eklendi
+        name: name, 
+        svgContent: newProjectDraft.svgRaw, 
+        createdAt: Date.now(), 
+        status: 'pending', 
+        feedback: null 
+      };
+      
       await window.storage.set('project:' + code, JSON.stringify(project), true);
       state.activeProject = project;
       state.activeCode = code;
       state.screen = 'designerDetail';
       newProjectDraft = { name: '', svgRaw: null, fileName: '', error: null };
+      
+      // Şifreyi bildirim ekranında size gösterir
+      alert('Proje Oluşturuldu!\n\nProje Kodu: ' + code + '\nGiriş Şifresi: ' + passcode);
     } catch (e) {
       newProjectDraft.error = 'Proje oluşturulurken bir sorun oluştu, tekrar deneyin.';
     }
