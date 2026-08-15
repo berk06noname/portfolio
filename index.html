@@ -21,7 +21,6 @@
             padding: 15px;
         }
 
-        /* Ana Konteyner: Bilgisayar ve mobilde ekranı daha iyi dolduracak şekilde genişletildi */
         .main-container {
             background-color: #ffffff;
             width: 100%;
@@ -33,7 +32,6 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
-        /* Kutuların Genel Tasarımı */
         .box {
             border: 4px solid #000000;
             display: flex;
@@ -57,7 +55,6 @@
             height: 110px; 
         }
 
-        /* --- TEK LOGO ALANI --- */
         .logos-wrapper {
             display: flex;
             align-items: center;
@@ -97,7 +94,7 @@
         }
 
         .ps-picker-box.is-open {
-            height: 420px; 
+            height: 440px; 
         }
 
         .ps-picker-header {
@@ -116,7 +113,6 @@
             gap: 14px;
         }
 
-        /* Kesin Kare ve Düzgün Önizleme Kutusu Düzenlemesi */
         .color-preview-graphic {
             width: 48px;
             height: 48px;
@@ -144,11 +140,10 @@
             transform: rotate(180deg);
         }
 
-        /* Açılan Renk Seçici Gövdesi */
         .ps-picker-body {
             display: none;
             width: 100%;
-            height: 310px;
+            height: 330px;
             padding: 16px;
             background-color: #f7f7f7;
             border-top: 2px solid #000000;
@@ -161,7 +156,6 @@
             display: flex;
         }
 
-        /* Parça Seçim Butonları */
         .part-selector-row {
             display: flex;
             gap: 10px;
@@ -185,7 +179,6 @@
             color: #fff;
         }
 
-        /* Renk Paleti Araçları Alanı: Tam Genişlik ve Esnek */
         .color-tools-container {
             display: flex;
             align-items: center;
@@ -195,16 +188,19 @@
             gap: 15px;
         }
 
-        /* Soldaki Kare Renk Matrisi */
+        /* --- KESİN KARE GARANTİSİ (ASPECT-RATIO) --- */
         .ps-color-square {
-            flex: 1;
-            max-width: 220px;
+            width: 180px;
             height: 180px;
+            min-width: 140px;
+            max-width: 190px;
+            aspect-ratio: 1 / 1; /* Karenin bozulmasını kesin olarak engeller */
             position: relative;
             cursor: crosshair;
             border: 2px solid #333;
             background: rgb(255, 0, 0); 
             touch-action: none;
+            flex-shrink: 0;
         }
 
         .ps-color-square::before {
@@ -237,15 +233,18 @@
             left: 0%;
         }
 
-        /* Sağdaki Dikey Renk (Hue) Şeridi */
         .ps-hue-slider {
-            width: 32px;
+            width: 28px;
             height: 180px;
+            min-height: 140px;
+            max-height: 190px;
+            aspect-ratio: 1 / 6;
             position: relative;
             cursor: pointer;
             border: 2px solid #333;
             background: linear-gradient(to bottom, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
             touch-action: none;
+            flex-shrink: 0;
         }
 
         .hue-marker {
@@ -265,6 +264,8 @@
             flex-direction: column;
             gap: 8px;
             justify-content: center;
+            flex-grow: 1;
+            align-items: flex-end;
         }
 
         .ps-info-row {
@@ -290,7 +291,6 @@
             border-radius: 4px;
         }
 
-        /* --- TİPOGRAFİ ALANI --- */
         .typography-content {
             display: flex;
             flex-direction: column;
@@ -310,7 +310,6 @@
             font-weight: 400;
         }
 
-        /* --- İLETİŞİM ALANI --- */
         .contact-container {
             display: flex;
             align-items: center;
@@ -350,7 +349,6 @@
 
     <div class="main-container">
         
-        <!-- Özel SVG Logo Alanı (Tek Logo) -->
         <div class="box box-logo">
             <div class="logos-wrapper">
                 <div class="logo-container" id="mainLogoContainer">
@@ -366,7 +364,6 @@
             </div>
         </div>
 
-        <!-- Photoshop Tarzı Renk Paneli -->
         <div class="box ps-picker-box" id="psPickerBox">
             <div class="ps-picker-header" id="psPickerToggle">
                 <div class="ps-picker-header-left">
@@ -377,24 +374,20 @@
             </div>
 
             <div class="ps-picker-body" onclick="event.stopPropagation()">
-                <!-- Parça Seçim Butonları -->
                 <div class="part-selector-row">
                     <button class="part-btn active" data-part="part-bg">Arka Plan</button>
                     <button class="part-btn" data-part="part-group">Logo Grubu (İkon)</button>
                 </div>
 
                 <div class="color-tools-container">
-                    <!-- Soldaki Kare Renk Matrisi -->
                     <div class="ps-color-square" id="psColorSquare">
                         <div class="square-marker" id="squareMarker"></div>
                     </div>
 
-                    <!-- Sağdaki Dikey Renk (Hue) Şeridi -->
                     <div class="ps-hue-slider" id="psHueSlider">
                         <div class="hue-marker" id="hueMarker"></div>
                     </div>
 
-                    <!-- HEX Giriş Alanı -->
                     <div class="ps-info-col">
                         <div class="ps-info-row">
                             <span>HEX:</span>
@@ -405,7 +398,6 @@
             </div>
         </div>
 
-        <!-- Tipografi Alanı -->
         <div class="box box-standard">
             <div class="typography-content">
                 <span class="font-name">Montserrat</span>
@@ -413,7 +405,6 @@
             </div>
         </div>
 
-        <!-- İLETİŞİM ALANI -->
         <div class="box box-standard">
             <div class="contact-container">
                 <a href="https://wa.me/905400451606" target="_blank" class="contact-card-btn" title="WhatsApp İletişim">
@@ -431,7 +422,6 @@
 
     </div>
 
-    <!-- JavaScript Mantığı -->
     <script>
         const mainLogoContainer = document.getElementById('mainLogoContainer');
         const psPickerBox = document.getElementById('psPickerBox');
