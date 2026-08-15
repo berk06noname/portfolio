@@ -176,8 +176,8 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             border: 2px solid #333;
             background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%),
-                        conic-gradient(from 0deg, red, magenta, blue, aqua, lime, yellow, red);
-            touch-action: none; /* Mobilde kaydırma yaparken ekranın kilitlenmesini önler */
+                        conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red);
+            touch-action: none;
         }
 
         /* Seçim İmleci Noktası */
@@ -340,7 +340,7 @@
 
     </div>
 
-    <!-- Illustrator Renk Çarkı ve Akıcı Sürükleme Kodları -->
+    <!-- Illustrator Renk Çarkı ve Doğru Renk Eşleme Mantığı -->
     <script>
         const starContainers = document.querySelectorAll('.star-container');
         let activeStarContainer = document.querySelector('.star-container.selected');
@@ -363,7 +363,7 @@
             aiWheelBox.classList.toggle('is-open');
         });
 
-        // Renk Çarkı ve Sürükleme Mantığı
+        // Renk Çarkı ve Düzeltilmiş Renk Eşleme Mantığı
         const cssColorWheel = document.getElementById('cssColorWheel');
         const wheelMarker = document.getElementById('wheelMarker');
         const aiHexInputBox = document.getElementById('aiHexInputBox');
@@ -416,8 +416,11 @@
                 distance = radius;
             }
 
+            // Illustrator çarkındaki açı sırasına tam uyum sağlandı (Red at 0deg)
             let angle = Math.atan2(y, x) * (180 / Math.PI);
             if (angle < 0) angle += 360;
+            
+            // Merkezden dışarıya doğru doygunluk (0 merkez, 100 en dış)
             let saturation = (distance / radius) * 100;
 
             let [r, g, b] = hsvToRgb(angle, saturation, 100);
