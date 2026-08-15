@@ -622,11 +622,19 @@
         }, { passive: true });
         window.addEventListener('touchend', () => { isDraggingHue = false; });
 
+        // Geliştirilmiş HEX Input Dinleyicisi
         psHexInput.addEventListener('input', function() {
             let val = this.value.trim();
-            if (/^#[0-9A-F]{6}$/i.test(val)) {
-                applyColorToActivePart(val);
-                let [r, g, b] = hexToRgb(val);
+            if (!val.startsWith('#')) val = '#' + val;
+            
+            // 3 veya 6 haneli HEX kontrolü
+            if (/^#([0-9A-F]{3}){1,2}$/i.test(val)) {
+                let fullHex = val;
+                if (val.length === 4) {
+                    fullHex = '#' + val[1]+val[1] + val[2]+val[2] + val[3]+val[3];
+                }
+                applyColorToActivePart(fullHex);
+                let [r, g, b] = hexToRgb(fullHex);
                 let [h, s, v] = rgbToHsv(r, g, b);
                 currentHue = h;
                 currentSaturation = s;
