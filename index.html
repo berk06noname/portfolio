@@ -108,7 +108,7 @@
         }
 
         .ai-wheel-box.is-open {
-            height: 270px; /* Panel açıldığında çarkın sığacağı yükseklik */
+            height: 290px; 
         }
 
         .ai-wheel-header {
@@ -126,7 +126,6 @@
             gap: 12px;
         }
 
-        /* Gerçek Yuvarlak Renk Çarkı İkonu */
         .color-wheel-graphic {
             width: 42px;
             height: 42px;
@@ -167,21 +166,57 @@
             display: flex;
         }
 
-        /* Illustrator Renk Tekerleği Kanvası */
-        #colorWheelCanvas {
+        /* Kusursuz Pürüzsüz CSS Renk Çarkı Konteynerı */
+        .css-color-wheel {
             width: 140px;
             height: 140px;
             border-radius: 50%;
+            position: relative;
             cursor: crosshair;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             border: 2px solid #333;
+            /* Dışarıdan içeriye doğru doygunluk (beyazdan renge) ve conic-gradient ile renk dağılımı */
+            background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%),
+                        conic-gradient(from 0deg, red, magenta, blue, aqua, lime, yellow, red);
         }
 
-        .ai-wheel-info {
+        /* Seçim İmleci Noktası */
+        .wheel-marker {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border: 2px solid #fff;
+            background-color: #000;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            box-shadow: 0 0 3px rgba(0,0,0,0.8);
+            top: 50%;
+            left: 50%;
+        }
+
+        /* Alt Değerler ve HEX Giriş Alanı */
+        .ai-wheel-info-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
             font-size: 0.9rem;
             font-family: monospace;
             font-weight: 700;
             color: #333;
+        }
+
+        .ai-hex-input-box {
+            font-family: monospace;
+            font-weight: 700;
+            font-size: 0.9rem;
+            width: 85px;
+            padding: 4px 6px;
+            border: 1px solid #999;
+            background: #fff;
+            text-align: center;
+            outline: none;
+            border-radius: 4px;
         }
 
         /* --- TİPOGRAFİ ALANI STİLLERİ --- */
@@ -273,8 +308,15 @@
             </div>
 
             <div class="ai-wheel-body">
-                <canvas id="colorWheelCanvas" width="140" height="140"></canvas>
-                <div class="ai-wheel-info" id="aiWheelHexText">HEX: #000000</div>
+                <!-- Sürüklenebilir CSS Renk Çarkı -->
+                <div class="css-color-wheel" id="cssColorWheel">
+                    <div class="wheel-marker" id="wheelMarker"></div>
+                </div>
+                <!-- HEX Gösterge ve Düzenlenebilir Input Alanı -->
+                <div class="ai-wheel-info-row">
+                    <span>HEX:</span>
+                    <input type="text" id="aiHexInputBox" class="ai-hex-input-box" value="#000000">
+                </div>
             </div>
         </div>
 
@@ -321,41 +363,11 @@
             aiWheelBox.classList.toggle('is-open');
         });
 
-        // Çark Çizimi ve İşlevselliği
-        const canvas = document.getElementById('colorWheelCanvas');
-        const ctx = canvas.getContext('2d');
-        const aiWheelHexText = document.getElementById('aiWheelHexText');
-        const radius = canvas.width / 2;
-
-        function drawColorWheel() {
-            const imageኮ = ctx.createImageData(canvas.width, canvas.height);
-            const data = imageኮ.data;
-
-            for (let x = 0; x < canvas.width; x++) {
-                for (let y = 0; y < canvas.height; y++) {
-                    let dx = x - radius;
-                    let dy = y - radius;
-                    let distance = Math.sqrt(dx * dx + dy * dy);
-
-                    let index = (y * canvas.width + x) * 4;
-
-                    if (distance <= radius) {
-                        let angle = Math.atan2(dy, dx) * (180 / Math.PI);
-                        if (angle < 0) angle += 360;
-                        let saturation = distance / radius;
-
-                        let [r, g, b] = hsvToRgb(angle, saturation * 100, 100);
-                        data[index] = r;
-                        data[index + 1] = g;
-                        data[index + 2] = b;
-                        data[index + 3] = 255;
-                    } else {
-                        data[index + 3] = 0; // Dış kısım şeffaf
-                    }
-                }
-            }
-            ctx.putImageData(imageኮ, 0, 0);
-        }
+        // Renk Çarkı ve Sürükleme Mantığı
+        const cssColorWheel = document.getElementById('cssColorWheel');
+        const wheelMarker = document.getElementById('wheelMarker');
+        const aiHexInputBox = document.getElementById('aiHexInputBox');
+        const radius = cssColorWheel.clientWidth / 2;
 
         function hsvToRgb(h, s, v) {
             s /= 100;
@@ -383,43 +395,81 @@
             return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
         }
 
-        function handleWheelClick(e) {
-            const rect = canvas.getBoundingClientRect();
-            let x = e.clientX - rect.left - radius;
-            let y = e.clientY - rect.top - radius;
-            let distance = Math.sqrt(x * x + y * y);
-
-            if (distance <= radius) {
-                let angle = Math.atan2(y, x) * (180 / Math.PI);
-                if (angle < 0) angle += 360;
-                let saturation = (distance / radius) * 100;
-
-                let [r, g, b] = hsvToRgb(angle, saturation, 100);
-                let hex = rgbToHex(r, g, b);
-
-                aiWheelHexText.innerText = `HEX: ${hex}`;
-
-                if (activeStarContainer) {
-                    activeStarContainer.querySelector('.star-icon').setAttribute('fill', hex);
-                }
+        function applyColor(hex) {
+            aiHexInputBox.value = hex;
+            if (activeStarContainer) {
+                activeStarContainer.querySelector('.star-icon').setAttribute('fill', hex);
             }
         }
 
-        canvas.addEventListener('mousedown', (e) => {
-            handleWheelClick(e);
-            function onMouseMove(ev) { handleWheelClick(ev); }
-            function onMouseUp() {
-                window.removeEventListener('mousemove', onMouseMove);
-                window.removeEventListener('mouseup', onMouseUp);
+        function updateColorFromCoordinates(clientX, clientY) {
+            const rect = cssColorWheel.getBoundingClientRect();
+            let x = clientX - rect.left - radius;
+            let y = clientY - rect.top - radius;
+            let distance = Math.sqrt(x * x + y * y);
+
+            if (distance > radius) {
+                // Çark dışına çıkarsa sınırlayalım
+                x = (x / distance) * radius;
+                y = (y / distance) * radius;
+                distance = radius;
             }
-            window.addEventListener('mousemove', onMouseMove);
-            window.addEventListener('mouseup', onMouseUp);
+
+            let angle = Math.atan2(y, x) * (180 / Math.PI);
+            if (angle < 0) angle += 360;
+            let saturation = (distance / radius) * 100;
+
+            let [r, g, b] = hsvToRgb(angle, saturation, 100);
+            let hex = rgbToHex(r, g, b);
+
+            // İşaretçinin konumunu güncelle
+            wheelMarker.style.left = `${((x + radius) / (radius * 2)) * 100}%`;
+            wheelMarker.style.top = `${((y + radius) / (radius * 2)) * 100}%`;
+
+            applyColor(hex);
+        }
+
+        // Fare veya dokunma ile sürükleme (Drag & Drop)
+        let isDragging = false;
+
+        cssColorWheel.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            updateColorFromCoordinates(e.clientX, e.clientY);
         });
 
-        canvas.addEventListener('click', handleWheelClick);
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            updateColorFromCoordinates(e.clientX, e.clientY);
+        });
 
-        // Çarkı oluştur
-        drawColorWheel();
+        window.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        // Mobil cihazlar için dokunarak sürükleme desteği
+        cssColorWheel.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            updateColorFromCoordinates(e.touches[0].clientX, e.touches[0].clientY);
+        });
+
+        window.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            updateColorFromCoordinates(e.touches[0].clientX, e.touches[0].clientY);
+        });
+
+        window.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+
+        // Manuel HEX input kutusuna yazı yazıldığında
+        aiHexInputBox.addEventListener('input', function() {
+            let val = this.value.trim();
+            if (/^#[0-9A-F]{6}$/i.test(val)) {
+                if (activeStarContainer) {
+                    activeStarContainer.querySelector('.star-icon').setAttribute('fill', val);
+                }
+            }
+        });
     </script>
 
 </body>
