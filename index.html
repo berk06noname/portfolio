@@ -94,7 +94,7 @@
         }
 
         .ps-picker-box.is-open {
-            height: 440px; 
+            height: auto; 
         }
 
         .ps-picker-header {
@@ -143,13 +143,11 @@
         .ps-picker-body {
             display: none;
             width: 100%;
-            height: 330px;
             padding: 16px;
             background-color: #f7f7f7;
             border-top: 2px solid #000000;
             flex-direction: column;
             gap: 16px;
-            flex-shrink: 0;
         }
 
         .ps-picker-box.is-open .ps-picker-body {
@@ -182,23 +180,22 @@
         .color-tools-container {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             width: 100%;
-            padding: 0 5px;
             gap: 12px;
+            flex-wrap: wrap;
         }
 
         /* Renk Matrisi (Kusursuz Kare) */
         .ps-color-square {
-            width: 160px;
-            height: 160px;
+            width: 150px;
+            height: 150px;
             aspect-ratio: 1 / 1;
             position: relative;
             cursor: crosshair;
             border: 2px solid #333;
             background: rgb(255, 0, 0); 
             touch-action: none;
-            flex-shrink: 0;
         }
 
         .ps-color-square::before {
@@ -234,13 +231,12 @@
         /* Hue (Renk Tonu) Çubuğu */
         .ps-hue-slider {
             width: 24px;
-            height: 160px;
+            height: 150px;
             position: relative;
             cursor: pointer;
             border: 2px solid #333;
             background: linear-gradient(to bottom, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
             touch-action: none;
-            flex-shrink: 0;
         }
 
         .hue-marker {
@@ -261,7 +257,6 @@
             flex-direction: column;
             gap: 6px;
             justify-content: center;
-            flex-shrink: 0;
         }
 
         .ps-info-row {
