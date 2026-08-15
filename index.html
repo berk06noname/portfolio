@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mobil Logo Sunumu - Çoklu Yıldız & Sınırsız Renk</title>
+    <title>Mobil Logo Sunumu - Çoklu Yıldız & Canlı Yuvarlak Renk Seçici</title>
     <style>
         /* Genel Sıfırlama */
         * {
@@ -82,7 +82,6 @@
         .star-icon {
             width: 65px;
             height: 65px;
-            /* Renk geçişini sınırsız palet için sıfırlıyoruz ki anlık tepki versin */
             transition: transform 0.3s ease;
             display: block;
         }
@@ -96,7 +95,7 @@
             transform: scale(1.08) rotate(5deg);
         }
 
-        /* --- SINIRSIZ RENK SEÇİCİ (COLOR PICKER) --- */
+        /* --- CANLI ÖNİZLEMELİ YUVARLAK RENK SEÇİCİ --- */
         .color-picker-wrapper {
             position: relative;
             display: flex;
@@ -108,14 +107,15 @@
             cursor: pointer;
         }
 
-        /* Temsili Renk Tekerleği İkonu */
-        .color-wheel {
+        /* Canlı önizleme yapan yuvarlak renk alanı (Arka planı seçilen renkle güncellenir) */
+        .color-wheel-live {
             width: 48px;
             height: 48px;
             border-radius: 50%;
-            background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);
+            background-color: #000000;
+            border: 2px solid rgba(0,0,0,0.15);
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            transition: transform 0.2s ease;
+            transition: transform 0.2s ease, background-color 0.1s ease;
         }
 
         .color-picker-text {
@@ -123,11 +123,11 @@
             font-weight: 600;
         }
 
-        .color-picker-wrapper:hover .color-wheel {
+        .color-picker-wrapper:hover .color-wheel-live {
             transform: scale(1.1);
         }
 
-        /* Görünmez yapılan ama tıklanabilen gerçek input */
+        /* Görünmez gerçek input (Tıklandığında işletim sisteminin renk paleti açılır ve kaydırıldıkça canlı önizleme yapar) */
         #nativeColorPicker {
             position: absolute;
             top: 0;
@@ -227,12 +227,13 @@
             </div>
         </div>
 
-        <!-- Sınırsız Renk Paleti (Native Color Picker) Alanı -->
+        <!-- Canlı Önizlemeli Yuvarlak Renk Seçici Alanı -->
         <div class="box box-standard">
             <div class="color-picker-wrapper">
-                <div class="color-wheel"></div>
+                <!-- Canlı renk önizlemesi yapan yuvarlak alan -->
+                <div class="color-wheel-live" id="colorWheelLive"></div>
                 <span class="color-picker-text">Sınırsız Renk Seç</span>
-                <!-- Arka planda çalışan görünmez renk seçici -->
+                <!-- Arkada çalışan canlı input -->
                 <input type="color" id="nativeColorPicker" value="#000000">
             </div>
         </div>
@@ -262,10 +263,11 @@
 
     </div>
 
-    <!-- Etkileşim ve Sınırsız Renk Seçim Mantığı -->
+    <!-- Etkileşim ve Canlı Önizleme Mantığı -->
     <script>
         const starContainers = document.querySelectorAll('.star-container');
         const nativeColorPicker = document.getElementById('nativeColorPicker');
+        const colorWheelLive = document.getElementById('colorWheelLive');
 
         // Aktif olarak seçilen yıldız (varsayılan olarak ortadaki büyük yıldız seçili)
         let activeStarContainer = document.querySelector('.star-container.selected');
@@ -279,11 +281,14 @@
             });
         });
 
-        // Sınırsız renk paletinde (color picker) renk değiştirildikçe (kaydırdıkça anlık tepki için 'input' olayı kullanılır)
+        // Renk paletinde gezinirken (canlı olarak) hem yuvarlak dairenin rengini hem de seçili yıldızı güncelle
         nativeColorPicker.addEventListener('input', function(event) {
             const selectedColor = event.target.value;
             
-            // SADECE aktif (seçili) olan yıldızın rengini güncelle
+            // 1. Yuvarlak butonun rengini canlı olarak güncelle
+            colorWheelLive.style.backgroundColor = selectedColor;
+
+            // 2. SADECE aktif (seçili) olan yıldızın rengini canlı olarak güncelle
             if (activeStarContainer) {
                 const starIcon = activeStarContainer.querySelector('.star-icon');
                 starIcon.setAttribute('fill', selectedColor);
