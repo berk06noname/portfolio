@@ -60,25 +60,38 @@
         /* --- ÇOKLU YILDIZ GRUBU --- */
         .stars-wrapper {
             display: flex;
-            gap: 12px;
+            gap: 16px;
             align-items: center;
             justify-content: center;
+        }
+
+        .star-container {
+            position: relative;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 12px;
+            transition: background-color 0.2s ease;
+        }
+
+        /* Seçilen yıldızın etrafındaki belirginlik efekti */
+        .star-container.selected {
+            background-color: rgba(0, 0, 0, 0.06);
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15);
         }
 
         .star-icon {
             width: 65px;
             height: 65px;
-            /* Renk geçişini yumuşak ve akıcı kılıyoruz */
             transition: fill 0.5s cubic-bezier(0.25, 1, 0.5, 1), transform 0.3s ease;
+            display: block;
         }
 
-        /* Ortadaki ana yıldız karizmatik durması için biraz daha büyük */
         .star-icon.main-star {
             width: 85px;
             height: 85px;
         }
 
-        .star-icon:hover {
+        .star-container:hover .star-icon {
             transform: scale(1.08) rotate(5deg);
         }
 
@@ -101,7 +114,6 @@
             gap: 16px; 
         }
 
-        /* Squarcle (Yuvarlatılmış Kare) Tasarımı */
         .color-swatch {
             width: 0; 
             height: 48px; 
@@ -131,6 +143,55 @@
             box-shadow: 0 8px 15px rgba(0,0,0,0.15);
         }
 
+        /* --- TİPOGRAFİ ALANI STİLLERİ --- */
+        .typography-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .font-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .font-preview {
+            font-size: 0.95rem;
+            color: #666666;
+            font-weight: 400;
+        }
+
+        /* --- İLETİŞİM / WHATSAPP ALANI STİLLERİ --- */
+        .whatsapp-link {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            height: 100%;
+            transition: background-color 0.2s ease;
+        }
+
+        .whatsapp-link:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .whatsapp-icon {
+            width: 28px;
+            height: 28px;
+            fill: #25D366;
+        }
+
+        .whatsapp-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #000000;
+        }
+
         /* En alttaki çözünürlük yazısı */
         .footer-text {
             text-align: center;
@@ -151,17 +212,23 @@
         <div class="box box-logo">
             <div class="stars-wrapper">
                 <!-- Sol Yıldız -->
-                <svg class="star-icon" viewBox="0 0 24 24" fill="#000000">
-                    <path d="M12 .587l3.668 7.431 8.2 1.151-6.064 5.828 1.58 8.137L12 18.896l-7.384 3.882 1.58-8.137-6.064-5.828 8.2-1.151z"/>
-                </svg>
+                <div class="star-container" data-star-index="0">
+                    <svg class="star-icon" viewBox="0 0 24 24" fill="#000000">
+                        <path d="M12 .587l3.668 7.431 8.2 1.151-6.064 5.828 1.58 8.137L12 18.896l-7.384 3.882 1.58-8.137-6.064-5.828 8.2-1.151z"/>
+                    </svg>
+                </div>
                 <!-- Ana (Ortadaki Büyük) Yıldız -->
-                <svg class="star-icon main-star" viewBox="0 0 24 24" fill="#000000">
-                    <path d="M12 .587l3.668 7.431 8.2 1.151-6.064 5.828 1.58 8.137L12 18.896l-7.384 3.882 1.58-8.137-6.064-5.828 8.2-1.151z"/>
-                </svg>
+                <div class="star-container selected" data-star-index="1">
+                    <svg class="star-icon main-star" viewBox="0 0 24 24" fill="#000000">
+                        <path d="M12 .587l3.668 7.431 8.2 1.151-6.064 5.828 1.58 8.137L12 18.896l-7.384 3.882 1.58-8.137-6.064-5.828 8.2-1.151z"/>
+                    </svg>
+                </div>
                 <!-- Sağ Yıldız -->
-                <svg class="star-icon" viewBox="0 0 24 24" fill="#000000">
-                    <path d="M12 .587l3.668 7.431 8.2 1.151-6.064 5.828 1.58 8.137L12 18.896l-7.384 3.882 1.58-8.137-6.064-5.828 8.2-1.151z"/>
-                </svg>
+                <div class="star-container" data-star-index="2">
+                    <svg class="star-icon" viewBox="0 0 24 24" fill="#000000">
+                        <path d="M12 .587l3.668 7.431 8.2 1.151-6.064 5.828 1.58 8.137L12 18.896l-7.384 3.882 1.58-8.137-6.064-5.828 8.2-1.151z"/>
+                    </svg>
+                </div>
             </div>
         </div>
 
@@ -177,12 +244,20 @@
 
         <!-- Tipografi Alanı -->
         <div class="box box-standard">
-            font-family
+            <div class="typography-content">
+                <span class="font-name">Montserrat</span>
+                <span class="font-preview">Aa Bb Cc 123</span>
+            </div>
         </div>
 
         <!-- İletişim / WhatsApp Alanı -->
         <div class="box box-standard">
-            contact-whatsapp
+            <a href="https://wa.me/" target="_blank" class="whatsapp-link">
+                <svg class="whatsapp-icon" viewBox="0 0 24 24">
+                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                </svg>
+                <span class="whatsapp-text">WhatsApp İletişim</span>
+            </a>
         </div>
 
         <!-- Alt Bilgi -->
@@ -192,12 +267,26 @@
 
     </div>
 
-    <!-- Pürüzsüz Etkileşim ve Çoklu Yıldız Senkronizasyon Mantığı -->
+    <!-- Etkileşim ve Seçim Mantığı -->
     <script>
         const colorBox = document.getElementById('colorBox');
-        const starIcons = document.querySelectorAll('.star-icon');
+        const starContainers = document.querySelectorAll('.star-container');
         const swatches = document.querySelectorAll('.color-swatch');
 
+        // Aktif olarak seçilen yıldız (varsayılan olarak ortadaki büyük yıldız seçili başlasın)
+        let activeStarContainer = document.querySelector('.star-container.selected');
+
+        // Yıldızlara tıklama: Hangi yıldızın seçildiğini belirle ve etrafına belirginlik ver
+        starContainers.forEach(container => {
+            container.addEventListener('click', function(e) {
+                e.stopPropagation(); // Renk paletinin açılmasını tetiklemesin
+                starContainers.forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                activeStarContainer = this;
+            });
+        });
+
+        // Renk kutusuna ve renk paletine tıklama yönetimi
         colorBox.addEventListener('click', function(event) {
             const clickedSwatch = event.target.closest('.color-swatch');
             
@@ -206,12 +295,13 @@
                     // 1. Seçilen rengi al
                     const selectedColor = clickedSwatch.getAttribute('data-color');
                     
-                    // 2. Üstteki TÜM yıldızların rengini aynı anda güncelle
-                    starIcons.forEach(star => {
-                        star.setAttribute('fill', selectedColor);
-                    });
+                    // 2. SADECE aktif (seçili) olan yıldızın rengini güncelle
+                    if (activeStarContainer) {
+                        const starIcon = activeStarContainer.querySelector('.star-icon');
+                        starIcon.setAttribute('fill', selectedColor);
+                    }
                     
-                    // 3. Aktif renk kutucuğunu güncelle
+                    // 3. Aktif renk paleti kutucuğunu güncelle
                     swatches.forEach(s => s.classList.remove('is-active'));
                     clickedSwatch.classList.add('is-active');
                 }
