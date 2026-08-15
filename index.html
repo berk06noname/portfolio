@@ -130,7 +130,8 @@
             width: 42px;
             height: 42px;
             border-radius: 50%;
-            background: conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red);
+            /* Dereceleri kesin sabitlenmiş Illustrator renk çarkı önizlemesi */
+            background: conic-gradient(red 0deg, yellow 60deg, lime 120deg, cyan 180deg, blue 240deg, magenta 300deg, red 360deg);
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
             border: 2px solid #000;
         }
@@ -166,7 +167,7 @@
             display: flex;
         }
 
-        /* Kesin Kalibre Edilmiş CSS Renk Çarkı */
+        /* Dereceleri Tam Sabitlenmiş Görsel ve Matematiksel Uyumlu Çark */
         .css-color-wheel {
             width: 140px;
             height: 140px;
@@ -176,7 +177,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             border: 2px solid #333;
             background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%),
-                        conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red);
+                        conic-gradient(red 0deg, yellow 60deg, lime 120deg, cyan 180deg, blue 240deg, magenta 300deg, red 360deg);
             touch-action: none;
         }
 
@@ -340,7 +341,7 @@
 
     </div>
 
-    <!-- Kesin Kalibre Edilmiş Renk Çarkı Mantığı -->
+    <!-- Derece Bazlı Sabitlenmiş Renk Çarkı Kodları -->
     <script>
         const starContainers = document.querySelectorAll('.star-container');
         let activeStarContainer = document.querySelector('.star-container.selected');
@@ -363,7 +364,7 @@
             aiWheelBox.classList.toggle('is-open');
         });
 
-        // Renk Çarkı ve Sabitlenmiş Açı Eşlemesi
+        // Renk Çarkı ve Tam Uyumlu Açı Kodları
         const cssColorWheel = document.getElementById('cssColorWheel');
         const wheelMarker = document.getElementById('wheelMarker');
         const aiHexInputBox = document.getElementById('aiHexInputBox');
@@ -416,14 +417,11 @@
                 distance = radius;
             }
 
-            // Doğrudan matematiksel açı (0 ile 360 arası)
             let angle = Math.atan2(y, x) * (180 / Math.PI);
             if (angle < 0) angle += 360;
 
             let saturation = (distance / radius) * 100;
-
-            // Görseldeki conic-gradient dağılımı ile tam eşleşen açı dönüşümü
-            let hue = angle; 
+            let hue = angle; // Derece sabitlemesiyle birebir eşleşti
 
             let [r, g, b] = hsvToRgb(hue, saturation, 100);
             let hex = rgbToHex(r, g, b);
