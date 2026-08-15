@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mobil Logo Sunumu - Parçalı SVG Renk Kontrolü</title>
+    <title>Mobil Logo Sunumu - Gruplanmış SVG Renk Kontrolü</title>
     <style>
         /* Genel Sıfırlama */
         * {
@@ -108,7 +108,7 @@
         }
 
         .ps-picker-box.is-open {
-            height: 420px; /* Parçalar için paneli biraz uzattık */
+            height: 380px; 
         }
 
         .ps-picker-header {
@@ -167,16 +167,15 @@
         /* Parça Seçim Butonları */
         .part-selector-row {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             justify-content: center;
-            flex-wrap: wrap;
         }
 
         .part-btn {
             background: #fff;
             border: 2px solid #ccc;
-            padding: 6px 10px;
-            font-size: 0.8rem;
+            padding: 6px 14px;
+            font-size: 0.85rem;
             font-weight: 600;
             border-radius: 6px;
             cursor: pointer;
@@ -352,49 +351,53 @@
                 <div class="logo-container" data-logo-index="0">
                     <svg class="custom-logo-svg" viewBox="0 0 250 250">
                         <rect class="part-bg" width="250" height="250" rx="42.74" ry="42.74" fill="#300"/>
-                        <path class="part-main" d="M122.11,66.15h-37.41l-42.97,115.62h33.48l5.58-17.27h42.98l5.58,17.27h34.5l-41.73-115.62h0Zm-19.84,69.5h-12.17l12.17-37.69,12.17,37.69h-12.17Z" fill="#000000"/>
-                        <rect class="part-bar" x="168.12" y="90.74" width="30.98" height="91.03" fill="#000000"/>
-                        <path class="part-dot" d="M200.12,74.28c.09,8.49-6.78,14.49-16.5,14.41-9.73,.08-16.59-5.92-16.5-14.41-.09-8.49,6.78-14.49,16.5-14.41,9.73-.08,16.59,5.92,16.5,14.41Z" fill="#000000"/>
+                        <g class="part-group" fill="#000000">
+                            <path d="M122.11,66.15h-37.41l-42.97,115.62h33.48l5.58-17.27h42.98l5.58,17.27h34.5l-41.73-115.62h0Zm-19.84,69.5h-12.17l12.17-37.69,12.17,37.69h-12.17Z"/>
+                            <rect x="168.12" y="90.74" width="30.98" height="91.03"/>
+                            <path d="M200.12,74.28c.09,8.49-6.78,14.49-16.5,14.41-9.73,.08-16.59-5.92-16.5-14.41-.09-8.49,6.78-14.49,16.5-14.41,9.73-.08,16.59,5.92,16.5,14.41Z"/>
+                        </g>
                     </svg>
                 </div>
                 <!-- Ana (Ortadaki Büyük) Logo -->
                 <div class="logo-container selected" data-logo-index="1">
                     <svg class="custom-logo-svg main-logo" viewBox="0 0 250 250">
                         <rect class="part-bg" width="250" height="250" rx="42.74" ry="42.74" fill="#300"/>
-                        <path class="part-main" d="M122.11,66.15h-37.41l-42.97,115.62h33.48l5.58-17.27h42.98l5.58,17.27h34.5l-41.73-115.62h0Zm-19.84,69.5h-12.17l12.17-37.69,12.17,37.69h-12.17Z" fill="#000000"/>
-                        <rect class="part-bar" x="168.12" y="90.74" width="30.98" height="91.03" fill="#000000"/>
-                        <path class="part-dot" d="M200.12,74.28c.09,8.49-6.78,14.49-16.5,14.41-9.73,.08-16.59-5.92-16.5-14.41-.09-8.49,6.78-14.49,16.5-14.41,9.73-.08,16.59,5.92,16.5,14.41Z" fill="#000000"/>
+                        <g class="part-group" fill="#000000">
+                            <path d="M122.11,66.15h-37.41l-42.97,115.62h33.48l5.58-17.27h42.98l5.58,17.27h34.5l-41.73-115.62h0Zm-19.84,69.5h-12.17l12.17-37.69,12.17,37.69h-12.17Z"/>
+                            <rect x="168.12" y="90.74" width="30.98" height="91.03"/>
+                            <path d="M200.12,74.28c.09,8.49-6.78,14.49-16.5,14.41-9.73,.08-16.59-5.92-16.5-14.41-.09-8.49,6.78-14.49,16.5-14.41,9.73-.08,16.59,5.92,16.5,14.41Z"/>
+                        </g>
                     </svg>
                 </div>
                 <!-- Sağ Logo -->
                 <div class="logo-container" data-logo-index="2">
                     <svg class="custom-logo-svg" viewBox="0 0 250 250">
                         <rect class="part-bg" width="250" height="250" rx="42.74" ry="42.74" fill="#300"/>
-                        <path class="part-main" d="M122.11,66.15h-37.41l-42.97,115.62h33.48l5.58-17.27h42.98l5.58,17.27h34.5l-41.73-115.62h0Zm-19.84,69.5h-12.17l12.17-37.69,12.17,37.69h-12.17Z" fill="#000000"/>
-                        <rect class="part-bar" x="168.12" y="90.74" width="30.98" height="91.03" fill="#000000"/>
-                        <path class="part-dot" d="M200.12,74.28c.09,8.49-6.78,14.49-16.5,14.41-9.73,.08-16.59-5.92-16.5-14.41-.09-8.49,6.78-14.49,16.5-14.41,9.73-.08,16.59,5.92,16.5,14.41Z" fill="#000000"/>
+                        <g class="part-group" fill="#000000">
+                            <path d="M122.11,66.15h-37.41l-42.97,115.62h33.48l5.58-17.27h42.98l5.58,17.27h34.5l-41.73-115.62h0Zm-19.84,69.5h-12.17l12.17-37.69,12.17,37.69h-12.17Z"/>
+                            <rect x="168.12" y="90.74" width="30.98" height="91.03"/>
+                            <path d="M200.12,74.28c.09,8.49-6.78,14.49-16.5,14.41-9.73,.08-16.59-5.92-16.5-14.41-.09-8.49,6.78-14.49,16.5-14.41,9.73-.08,16.59,5.92,16.5,14.41Z"/>
+                        </g>
                     </svg>
                 </div>
             </div>
         </div>
 
-        <!-- Photoshop Tarzı Renk Paneli (Parçalı Kontrol Eklendi) -->
+        <!-- Photoshop Tarzı Renk Paneli -->
         <div class="box ps-picker-box" id="psPickerBox">
             <div class="ps-picker-header" id="psPickerToggle">
                 <div class="ps-picker-header-left">
                     <div class="color-preview-graphic" id="headerColorPreview"></div>
-                    <span class="ps-picker-title">Parçalı Renk Ayarla</span>
+                    <span class="ps-picker-title">Gruplu Renk Ayarla</span>
                 </div>
                 <span class="ps-picker-arrow">▼</span>
             </div>
 
             <div class="ps-picker-body" onclick="event.stopPropagation()">
-                <!-- Hangi Parçanın Boyanacağını Seçen Butonlar -->
+                <!-- Parça Seçim Butonları -->
                 <div class="part-selector-row">
                     <button class="part-btn active" data-part="part-bg">Arka Plan</button>
-                    <button class="part-btn" data-part="part-main">Ana Gövde (A)</button>
-                    <button class="part-btn" data-part="part-bar">Dikey Çubuk</button>
-                    <button class="part-btn" data-part="part-dot">Üst Daire</button>
+                    <button class="part-btn" data-part="part-group">Logo Grubu (İkon)</button>
                 </div>
 
                 <div class="color-tools-container">
@@ -439,12 +442,11 @@
 
     </div>
 
-    <!-- Parçalı Renk ve Panel Kontrol Mantığı -->
+    <!-- JavaScript Mantığı -->
     <script>
         const logoContainers = document.querySelectorAll('.logo-container');
         let activeLogoContainer = document.querySelector('.logo-container.selected');
 
-        // Logo kartı seçimi
         logoContainers.forEach(container => {
             container.addEventListener('click', function(e) {
                 e.stopPropagation();
@@ -455,7 +457,6 @@
             });
         });
 
-        // Panel Açma / Kapatma
         const psPickerBox = document.getElementById('psPickerBox');
         const psPickerToggle = document.getElementById('psPickerToggle');
 
@@ -463,9 +464,8 @@
             psPickerBox.classList.toggle('is-open');
         });
 
-        // Parça Seçim Butonları Mantığı
         const partButtons = document.querySelectorAll('.part-btn');
-        let activePartClass = 'part-bg'; // Varsayılan arka plan seçili
+        let activePartClass = 'part-bg';
 
         partButtons.forEach(btn => {
             btn.addEventListener('click', function() {
@@ -476,7 +476,6 @@
             });
         });
 
-        // Aktif parçanın rengini önizleme kutusuna yansıt
         function updatePreviewFromActivePart() {
             if (!activeLogoContainer) return;
             const targetEl = activeLogoContainer.querySelector('.' + activePartClass);
@@ -487,7 +486,6 @@
             }
         }
 
-        // Renk Paneli Değişkenleri
         const psColorSquare = document.getElementById('psColorSquare');
         const squareMarker = document.getElementById('squareMarker');
         const psHueSlider = document.getElementById('psHueSlider');
@@ -548,7 +546,6 @@
             psColorSquare.style.backgroundColor = `rgb(${pr}, ${pg}, ${pb})`;
         }
 
-        // Kare üzerinde sürükleme
         function updateSquareFromCoords(clientX, clientY) {
             const rect = psColorSquare.getBoundingClientRect();
             let x = clientX - rect.left;
@@ -587,7 +584,6 @@
         }, { passive: true });
         window.addEventListener('touchend', () => { isDraggingSquare = false; });
 
-        // Dikey Şerit üzerinde sürükleme
         function updateHueFromCoords(clientY) {
             const rect = psHueSlider.getBoundingClientRect();
             let y = clientY - rect.top;
@@ -622,7 +618,6 @@
         }, { passive: true });
         window.addEventListener('touchend', () => { isDraggingHue = false; });
 
-        // Manuel HEX giriş desteği
         psHexInput.addEventListener('input', function() {
             let val = this.value.trim();
             if (/^#[0-9A-F]{6}$/i.test(val)) {
@@ -630,7 +625,6 @@
             }
         });
 
-        // İlk açılış senkronizasyonu
         updatePreviewFromActivePart();
     </script>
 
