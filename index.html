@@ -3,651 +3,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logo Sunumu - Renk Kontrolü</title>
+    <title>Logo Sunum Paneli</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #333333; 
+            /* Sayfanın varsayılan arka planı */
+            background-color: #ffffff; 
+            display: flex;
+            flex-direction: column;
             min-height: 100vh;
+            transition: background-color 0.3s ease;
+        }
+
+        /* --- ÜST KISIM: LOGO ÖNİZLEME ALANI --- */
+        #preview-area {
+            flex-grow: 1;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            padding: 0;
-        }
-
-        .main-container {
-            background-color: #ffffff;
-            width: 100%;
-            max-width: none;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-            box-shadow: none;
-            min-height: 100vh;
-        }
-
-        .box {
-            border: 4px solid #000000;
-            display: flex;
             align-items: center;
+            padding: 50px;
+        }
+
+        #logo-box {
+            /* Logonun arkasındaki kutu */
+            background-color: #3b0909; 
+            width: 300px;
+            height: 300px;
+            border-radius: 40px;
+            display: flex;
             justify-content: center;
-            font-size: 1.2rem;
-            font-weight: 500;
-            color: #000000;
-            width: 100%;
-            background-color: #ffffff;
-            position: relative;
-        }
-
-        .box-logo {
-            height: 320px; 
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .box-standard {
-            height: 110px; 
-        }
-
-        .logos-wrapper {
-            display: flex;
             align-items: center;
-            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: background-color 0.3s ease;
         }
 
-        .logo-container {
-            position: relative;
-            cursor: pointer;
-            padding: 12px;
-            border-radius: 12px;
+        /* Sizin ekleyeceğiniz SVG'nin boyut ayarı */
+        #logo-box svg {
+            width: 60%;
+            height: 60%;
+            transition: fill 0.3s ease;
         }
 
-        .custom-logo-svg {
-            width: 160px;
-            height: 160px;
-            transition: transform 0.3s ease;
-            display: block;
-        }
 
-        .logo-container:hover .custom-logo-svg {
-            transform: scale(1.05) rotate(2deg);
-        }
-
-        /* --- ADOBE PHOTOSHOP TARZI RENK PANELİ --- */
-        .ps-picker-box {
-            cursor: pointer;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-            height: 110px;
-            overflow: hidden;
-            transition: height 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            background-color: #ffffff;
-            flex-direction: column;
-            padding: 0;
-            justify-content: flex-start;
-        }
-
-        .ps-picker-box.is-open {
-            height: 440px; 
-        }
-
-        .ps-picker-header {
+        /* --- ALT KISIM: KONTROL PANELİ --- */
+        #control-panel {
+            background-color: #9ea622; /* Görseldeki yeşilimsi sarı ton */
+            padding: 20px 40px;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            width: 100%;
-            height: 110px;
-            padding: 0 24px;
-            flex-shrink: 0;
-        }
-
-        .ps-picker-header-left {
-            display: flex;
             align-items: center;
-            gap: 14px;
+            border-top: 2px solid rgba(0,0,0,0.1);
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
-        .color-preview-graphic {
-            width: 48px;
-            height: 48px;
-            min-width: 48px;
-            min-height: 48px;
-            border-radius: 6px;
-            background: #000000;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            border: 2px solid #000;
-            padding: 0;
-            margin: 0;
-        }
-
-        .ps-picker-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-        }
-
-        .ps-picker-arrow {
-            font-size: 1.3rem;
-            transition: transform 0.3s ease;
-        }
-
-        .ps-picker-box.is-open .ps-picker-arrow {
-            transform: rotate(180deg);
-        }
-
-        .ps-picker-body {
-            display: none;
-            width: 100%;
-            height: 330px;
-            padding: 16px;
-            background-color: #f7f7f7;
-            border-top: 2px solid #000000;
+        /* Sol Taraf: HEX Kod Gösterimi */
+        .hex-display-container {
+            display: flex;
             flex-direction: column;
-            gap: 16px;
-            flex-shrink: 0;
-        }
-
-        .ps-picker-box.is-open .ps-picker-body {
-            display: flex;
-        }
-
-        .part-selector-row {
-            display: flex;
             gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
         }
 
-        .part-btn {
-            background: #fff;
-            border: 2px solid #ccc;
-            padding: 8px 18px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .part-btn.active {
-            border-color: #000;
-            background: #000;
-            color: #fff;
-        }
-
-        .color-tools-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        /* Renk Matrisi */
-        .ps-color-square {
-            width: 150px;
-            height: 150px;
-            aspect-ratio: 1 / 1;
-            position: relative;
-            cursor: crosshair;
+        .color-preview-box {
+            width: 80px;
+            height: 80px;
+            background-color: #ffffff;
             border: 2px solid #333;
-            background: rgb(255, 0, 0); 
-            touch-action: none;
+            border-radius: 8px;
         }
 
-        .ps-color-square::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to right, #fff, rgba(255,255,255,0));
-            pointer-events: none;
+        .hex-text {
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 5px 10px;
+            font-weight: bold;
+            border-radius: 4px;
+            font-size: 14px;
         }
 
-        .ps-color-square::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, transparent, #000);
-            pointer-events: none;
-        }
-
-        .square-marker {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            border: 2px solid #fff;
-            background-color: transparent;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            box-shadow: 0 0 3px rgba(0,0,0,0.9);
-            top: 100%;
-            left: 0%;
-        }
-
-        /* Hue (Renk Tonu) Çubuğu */
-        .ps-hue-slider {
-            width: 24px;
-            height: 150px;
-            position: relative;
-            cursor: pointer;
-            border: 2px solid #333;
-            background: linear-gradient(to bottom, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
-            touch-action: none;
-        }
-
-        .hue-marker {
-            position: absolute;
-            left: -5px;
-            right: -5px;
-            height: 8px;
-            background: #fff;
-            border: 1px solid #000;
-            transform: translateY(-50%);
-            pointer-events: none;
-            top: 0%;
-        }
-
-        /* HEX Alanı Konteyneri */
-        .ps-info-col {
+        /* Sağ Taraf: Renk Seçiciler */
+        .color-controls {
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            justify-content: center;
+            gap: 10px;
         }
 
-        .ps-info-row {
+        .control-group {
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 0.95rem;
-            font-family: monospace;
-            font-weight: 700;
+            justify-content: flex-end;
+            gap: 15px;
+            background: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .control-group span {
+            font-size: 14px;
+            font-weight: 600;
             color: #333;
         }
 
-        .ps-hex-input {
-            font-family: monospace;
-            font-weight: 700;
-            font-size: 0.95rem;
-            width: 90px;
-            padding: 6px;
-            border: 1px solid #999;
-            background: #fff;
-            text-align: center;
-            outline: none;
-            border-radius: 4px;
+        /* Renk seçici input'un görünümünü düzenleme */
+        input[type="color"] {
+            -webkit-appearance: none;
+            border: none;
+            width: 60px;
+            height: 30px;
+            border-radius: 15px;
+            cursor: pointer;
+            padding: 0;
+            background: none;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        input[type="color"]::-webkit-color-swatch {
+            border: 2px solid #333;
+            border-radius: 15px;
         }
 
-        .typography-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .font-name {
-            font-size: 1.6rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        .font-preview {
-            font-size: 1.05rem;
-            color: #666666;
-            font-weight: 400;
-        }
-
-        .contact-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 32px;
-            width: 100%;
-            height: 100%;
-        }
-
-        .contact-card-btn {
-            width: 65px;
-            height: 65px;
-            border: 3px solid #000000;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        /* --- SOSYAL MEDYA İKONLARI ALANI --- */
+        #footer {
             background-color: #ffffff;
-            text-decoration: none;
-            transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+            text-align: center;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
         }
-
-        .contact-card-btn:hover {
-            transform: translateY(-3px);
-            background-color: #f8f8f8;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            cursor: pointer;
         }
-
-        .contact-icon {
-            width: 36px;
-            height: 36px;
-            display: block;
-        }
+        .social-icon.insta { background-color: #e1306c; }
+        .social-icon.wp { background-color: #25d366; }
+        .social-icon.tw { background-color: #1da1f2; }
     </style>
 </head>
 <body>
 
-    <div class="main-container" id="mainContainer">
+    <!-- ÜST KISIM: LOGO GÖRÜNÜMÜ -->
+    <div id="preview-area">
+        <div id="logo-box">
+            
+            <!-- BURAYA KENDİ SVG LOGONUZU YAPIŞTIRACAKSINIZ -->
+            <!-- Örnek olarak Ai yazan bir SVG ekledim -->
+            <!-- ÖNEMLİ: Renginin değişmesini istediğiniz path veya text etiketine id="logo-vector" eklemelisiniz! -->
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <text id="logo-vector" x="50" y="55" font-family="Arial, sans-serif" font-weight="900" font-size="55" fill="#f39200" text-anchor="middle" dominant-baseline="middle">Ai</text>
+            </svg>
+            <!-- SVG BİTİŞİ -->
+
+        </div>
+    </div>
+
+    <!-- ALT KISIM: RENK KONTROL PANELİ -->
+    <div id="control-panel">
         
-        <div class="box box-logo">
-            <div class="logos-wrapper">
-                <div class="logo-container" id="mainLogoContainer">
-                    <svg class="custom-logo-svg" viewBox="0 0 250 250">
-                        <rect class="part-bg" width="250" height="250" rx="42.74" ry="42.74" fill="#330000"/>
-                        <g class="part-group" fill="#ff9a00">
-                            <path d="M122.11,66.15h-37.41l-42.97,115.62h33.48l5.58-17.27h42.98l5.58,17.27h34.5l-41.73-115.62h0Zm-19.84,69.5h-12.17l12.17-37.69,12.17,37.69h-12.17Z"/>
-                            <rect x="168.12" y="90.74" width="30.98" height="91.03"/>
-                            <path d="M200.12,74.28c.09,8.49-6.78,14.49-16.5,14.41-9.73,.08-16.59-5.92-16.5-14.41-.09-8.49,6.78-14.49,16.5-14.41,9.73-.08,16.59,5.92,16.5,14.41Z"/>
-                        </g>
-                    </svg>
-                </div>
-            </div>
+        <!-- Seçilen Rengin Hex Kodunu Gösteren Kutu -->
+        <div class="hex-display-container">
+            <div class="color-preview-box" id="active-color-box"></div>
+            <div class="hex-text">HEX CODE: <span id="hex-value">#ffffff</span></div>
         </div>
 
-        <div class="box ps-picker-box" id="psPickerBox">
-            <div class="ps-picker-header" id="psPickerToggle">
-                <div class="ps-picker-header-left">
-                    <div class="color-preview-graphic" id="headerColorPreview"></div>
-                    <span class="ps-picker-title">Renk Seçimi</span>
-                </div>
-                <span class="ps-picker-arrow">▼</span>
-            </div>
+        <!-- Renk Seçim Ayarları -->
+        <div class="color-controls">
+            <label class="control-group">
+                <span>Ana Arka Plan Rengi:</span>
+                <input type="color" id="page-bg-color" value="#ffffff">
+            </label>
+            
+            <label class="control-group">
+                <span>Logo Arka Planı (Kutu):</span>
+                <input type="color" id="box-bg-color" value="#3b0909">
+            </label>
 
-            <div class="ps-picker-body" onclick="event.stopPropagation()">
-                <div class="part-selector-row">
-                    <button class="part-btn active" data-part="part-bg">Arka Plan</button>
-                    <button class="part-btn" data-part="part-group">Logo Grubu (İkon)</button>
-                </div>
-
-                <div class="color-tools-container">
-                    <div class="ps-color-square" id="psColorSquare">
-                        <div class="square-marker" id="squareMarker"></div>
-                    </div>
-
-                    <div class="ps-hue-slider" id="psHueSlider">
-                        <div class="hue-marker" id="hueMarker"></div>
-                    </div>
-
-                    <div class="ps-info-col">
-                        <div class="ps-info-row">
-                            <span>HEX:</span>
-                            <input type="text" id="psHexInput" class="ps-hex-input" value="#330000">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="box box-standard">
-            <div class="typography-content">
-                <span class="font-name">Montserrat</span>
-                <span class="font-preview">Aa Bb Cc 123</span>
-            </div>
-        </div>
-
-        <div class="box box-standard">
-            <div class="contact-container">
-                <a href="https://wa.me/905400451606" target="_blank" class="contact-card-btn" title="WhatsApp İletişim">
-                    <svg class="contact-icon" viewBox="0 0 24 24">
-                        <path fill="#25D366" d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
-                    </svg>
-                </a>
-                <a href="https://www.tr.freelancer.com/u/hamdiberkayaypek" target="_blank" class="contact-card-btn" title="Freelancer Profili">
-                    <svg class="contact-icon" viewBox="-0.23 0 97.266 72.333">
-                        <path d="M56.897 0l6.624 9.29L97.036 0M22.075 72.333l18.13-17.725-10.912-11.71M54.152 0l-9.69 8.738 16.298.608M16.482 0l3.48 7.133 19.18 1.195M26.75 36.986l14.17-26.434L-.23 8.328M28.4 38.662L41.785 53.04 56.55 38.567l4.582-26.957-17.993-.918" fill="#29b2fe"/>
-                    </svg>
-                </a>
-            </div>
+            <label class="control-group">
+                <span>Logo Rengi (Vektör):</span>
+                <input type="color" id="vector-color" value="#f39200">
+            </label>
         </div>
 
     </div>
 
+    <!-- SOSYAL MEDYA İKONLARI -->
+    <div id="footer">
+        <div class="social-icon">🎨</div>
+        <div class="social-icon insta">📸</div>
+        <div class="social-icon wp">💬</div>
+        <div class="social-icon tw">🐦</div>
+    </div>
+
+    <!-- JAVASCRIPT KODLARI (İnteraktiflik için) -->
     <script>
-        // Photoshop Renk Paneli Kodları
-        const mainLogoContainer = document.getElementById('mainLogoContainer');
-        const psPickerBox = document.getElementById('psPickerBox');
-        const psPickerToggle = document.getElementById('psPickerToggle');
-        const partButtons = document.querySelectorAll('.part-btn');
+        // HTML elementlerini seçiyoruz
+        const pageBgInput = document.getElementById('page-bg-color');
+        const boxBgInput = document.getElementById('box-bg-color');
+        const vectorColorInput = document.getElementById('vector-color');
+        
+        const bodyElement = document.body;
+        const logoBox = document.getElementById('logo-box');
+        const logoVector = document.getElementById('logo-vector');
+        
+        const activeColorBox = document.getElementById('active-color-box');
+        const hexValueText = document.getElementById('hex-value');
 
-        const psColorSquare = document.getElementById('psColorSquare');
-        const squareMarker = document.getElementById('squareMarker');
-        const psHueSlider = document.getElementById('psHueSlider');
-        const hueMarker = document.getElementById('hueMarker');
-        const psHexInput = document.getElementById('psHexInput');
-        const headerColorPreview = document.getElementById('headerColorPreview');
+        // Hex kodunu güncelleyen fonksiyon
+        function updateHexDisplay(colorValue) {
+            activeColorBox.style.backgroundColor = colorValue;
+            hexValueText.textContent = colorValue.toUpperCase();
+        }
 
-        let activePartClass = 'part-bg';
-        let currentHue = 0;
-        let currentSaturation = 0;
-        let currentBrightness = 0;
-
-        psPickerToggle.addEventListener('click', function() {
-            psPickerBox.classList.toggle('is-open');
+        // 1. Ana Arka Plan Değiştiğinde
+        pageBgInput.addEventListener('input', function(e) {
+            bodyElement.style.backgroundColor = e.target.value;
+            updateHexDisplay(e.target.value);
         });
 
-        partButtons.forEach(btn => {
-            btn.addEventListener('click', function() {
-                partButtons.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                activePartClass = this.getAttribute('data-part');
-                syncPickerFromActivePart();
-            });
+        // 2. Kutu Arka Planı Değiştiğinde
+        boxBgInput.addEventListener('input', function(e) {
+            logoBox.style.backgroundColor = e.target.value;
+            updateHexDisplay(e.target.value);
         });
 
-        function hexToRgb(hex) {
-            let cleanHex = hex.replace('#', '');
-            if (cleanHex.length === 3) {
-                cleanHex = cleanHex.split('').map(c => c + c).join('');
+        // 3. Logonun Kendi Rengi Değiştiğinde
+        vectorColorInput.addEventListener('input', function(e) {
+            // Eğer logonuz SVG path'lerden oluşuyorsa fill veya stroke'u değiştirir
+            if(logoVector) {
+                logoVector.setAttribute('fill', e.target.value);
             }
-            let num = parseInt(cleanHex, 16);
-            return [(num >> 16) & 255, (num >> 8) & 255, num & 255];
-        }
-
-        function rgbToHsv(r, g, b) {
-            r /= 255; g /= 255; b /= 255;
-            let max = Math.max(r, g, b), min = Math.min(r, g, b);
-            let h, s, v = max;
-            let d = max - min;
-            s = max === 0 ? 0 : d / max;
-
-            if (max === min) {
-                h = 0;
-            } else {
-                switch (max) {
-                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-                    case g: h = (b - r) / d + 2; break;
-                    case b: h = (r - g) / d + 4; break;
-                }
-                h /= 6;
-            }
-            return [h * 360, s * 100, v * 100];
-        }
-
-        function hsvToRgb(h, s, v) {
-            s /= 100; v /= 100;
-            let c = v * s;
-            let x = c * (1 - Math.abs((h / 60) % 2 - 1));
-            let m = v - c;
-            let r = 0, g = 0, b = 0;
-
-            if (0 <= h && h < 60) { r = c; g = x; b = 0; }
-            else if (60 <= h && h < 120) { r = x; g = c; b = 0; }
-            else if (120 <= h && h < 180) { r = 0; g = c; b = x; }
-            else if (180 <= h && h < 240) { r = 0; g = x; b = c; }
-            else if (240 <= h && h < 300) { r = x; g = 0; b = c; }
-            else if (300 <= h && h < 360) { r = c; g = 0; b = x; }
-
-            return [
-                Math.round((r + m) * 255),
-                Math.round((g + m) * 255),
-                Math.round((b + m) * 255)
-            ];
-        }
-
-        function rgbToHex(r, g, b) {
-            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
-        }
-
-        function syncPickerFromActivePart() {
-            const targetEl = mainLogoContainer.querySelector('.' + activePartClass);
-            if (!targetEl) return;
-
-            let currentHex = targetEl.getAttribute('fill') || '#000000';
-            if (!currentHex.startsWith('#')) currentHex = '#000000';
-
-            headerColorPreview.style.backgroundColor = currentHex;
-            psHexInput.value = currentHex;
-
-            let [r, g, b] = hexToRgb(currentHex);
-            let [h, s, v] = rgbToHsv(r, g, b);
-
-            currentHue = h;
-            currentSaturation = s;
-            currentBrightness = v;
-
-            updatePickerUIElements();
-        }
-
-        function updatePickerUIElements() {
-            let huePercent = (currentHue / 360) * 100;
-            hueMarker.style.top = `${huePercent}%`;
-
-            let [pr, pg, pb] = hsvToRgb(currentHue, 100, 100);
-            psColorSquare.style.backgroundColor = `rgb(${pr}, ${pg}, ${pb})`;
-
-            squareMarker.style.left = `${currentSaturation}%`;
-            squareMarker.style.top = `${100 - currentBrightness}%`;
-        }
-
-        function applyColorToActivePart(hex) {
-            headerColorPreview.style.backgroundColor = hex;
-            const targetEl = mainLogoContainer.querySelector('.' + activePartClass);
-            if (targetEl) {
-                targetEl.setAttribute('fill', hex);
-            }
-        }
-
-        function updateColorFromPicker(updateInput = true) {
-            let [r, g, b] = hsvToRgb(currentHue, currentSaturation, currentBrightness);
-            let hex = rgbToHex(r, g, b);
-
-            if (updateInput) {
-                psHexInput.value = hex;
-            }
-            applyColorToActivePart(hex);
-
-            let [pr, pg, pb] = hsvToRgb(currentHue, 100, 100);
-            psColorSquare.style.backgroundColor = `rgb(${pr}, ${pg}, ${pb})`;
-        }
-
-        function updateSquareFromCoords(clientX, clientY) {
-            const rect = psColorSquare.getBoundingClientRect();
-            let x = clientX - rect.left;
-            let y = clientY - rect.top;
-
-            x = Math.max(0, Math.min(x, rect.width));
-            y = Math.max(0, Math.min(y, rect.height));
-
-            currentSaturation = (x / rect.width) * 100;
-            currentBrightness = 100 - (y / rect.height) * 100;
-
-            squareMarker.style.left = `${(x / rect.width) * 100}%`;
-            squareMarker.style.top = `${(y / rect.height) * 100}%`;
-
-            updateColorFromPicker(true);
-        }
-
-        let isDraggingSquare = false;
-        psColorSquare.addEventListener('mousedown', (e) => {
-            isDraggingSquare = true;
-            updateSquareFromCoords(e.clientX, e.clientY);
-        });
-        window.addEventListener('mousemove', (e) => {
-            if (!isDraggingSquare) return;
-            updateSquareFromCoords(e.clientX, e.clientY);
-        });
-        window.addEventListener('mouseup', () => { isDraggingSquare = false; });
-
-        psColorSquare.addEventListener('touchstart', (e) => {
-            isDraggingSquare = true;
-            updateSquareFromCoords(e.touches[0].clientX, e.touches[0].clientY);
-        }, { passive: true });
-        window.addEventListener('touchmove', (e) => {
-            if (!isDraggingSquare) return;
-            updateSquareFromCoords(e.touches[0].clientX, e.touches[0].clientY);
-        }, { passive: true });
-        window.addEventListener('touchend', () => { isDraggingSquare = false; });
-
-        function updateHueFromCoords(clientY) {
-            const rect = psHueSlider.getBoundingClientRect();
-            let y = clientY - rect.top;
-            y = Math.max(0, Math.min(y, rect.height));
-
-            currentHue = (y / rect.height) * 360;
-            if (currentHue >= 360) currentHue = 359.9;
-
-            hueMarker.style.top = `${(y / rect.height) * 100}%`;
-
-            updateColorFromPicker(true);
-        }
-
-        let isDraggingHue = false;
-        psHueSlider.addEventListener('mousedown', (e) => {
-            isDraggingHue = true;
-            updateHueFromCoords(e.clientY);
-        });
-        window.addEventListener('mousemove', (e) => {
-            if (!isDraggingHue) return;
-            updateHueFromCoords(e.clientY);
-        });
-        window.addEventListener('mouseup', () => { isDraggingHue = false; });
-
-        psHueSlider.addEventListener('touchstart', (e) => {
-            isDraggingHue = true;
-            updateHueFromCoords(e.touches[0].clientY);
-        }, { passive: true });
-        window.addEventListener('touchmove', (e) => {
-            if (-!isDraggingHue) return; // Fix applied
-            updateHueFromCoords(e.touches[0].clientY);
-        }, { passive: true });
-        window.addEventListener('touended', () => { isDraggingHue = false; }); // Fixed typo in event listener reference if needed, handled standard touchend below
-
-        psHexInput.value = '#330000';
-        psHexInput.addEventListener('input', function() {
-            let val = this.value.trim();
-            if (!val.startsWith('#')) val = '#' + val;
-            
-            if (/^#([0-9A-F]{3}){1,2}$/i.test(val)) {
-                let fullHex = val;
-                if (val.length === 4) {
-                    fullHex = '#' + val[1]+val[1] + val[2]+val[2] + val[3]+val[3];
-                }
-                applyColorToActivePart(fullHex);
-                let [r, g, b] = hexToRgb(fullHex);
-                let [h, s, v] = rgbToHsv(r, g, b);
-                currentHue = h;
-                currentSaturation = s;
-                currentBrightness = v;
-                updatePickerUIElements();
-            }
+            updateHexDisplay(e.target.value);
         });
 
-        syncPickerFromActivePart();
+        // Başlangıçta ana arka plan rengini HEX panelinde göster
+        updateHexDisplay(pageBgInput.value);
     </script>
+
 </body>
 </html>
