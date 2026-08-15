@@ -184,17 +184,15 @@
             align-items: center;
             justify-content: space-between;
             width: 100%;
-            padding: 0 10px;
-            gap: 15px;
+            padding: 0 5px;
+            gap: 12px;
         }
 
-        /* --- KESİN KARE GARANTİSİ (ASPECT-RATIO) --- */
+        /* Renk Matrisi (Kusursuz Kare) */
         .ps-color-square {
-            width: 180px;
-            height: 180px;
-            min-width: 140px;
-            max-width: 190px;
-            aspect-ratio: 1 / 1; /* Karenin bozulmasını kesin olarak engeller */
+            width: 160px;
+            height: 160px;
+            aspect-ratio: 1 / 1;
             position: relative;
             cursor: crosshair;
             border: 2px solid #333;
@@ -233,12 +231,10 @@
             left: 0%;
         }
 
+        /* Hue (Renk Tonu) Çubuğu */
         .ps-hue-slider {
-            width: 28px;
-            height: 180px;
-            min-height: 140px;
-            max-height: 190px;
-            aspect-ratio: 1 / 6;
+            width: 24px;
+            height: 160px;
             position: relative;
             cursor: pointer;
             border: 2px solid #333;
@@ -259,13 +255,13 @@
             top: 0%;
         }
 
+        /* HEX Alanı Konteyneri */
         .ps-info-col {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             justify-content: center;
-            flex-grow: 1;
-            align-items: flex-end;
+            flex-shrink: 0;
         }
 
         .ps-info-row {
@@ -282,7 +278,7 @@
             font-family: monospace;
             font-weight: 700;
             font-size: 0.95rem;
-            width: 95px;
+            width: 90px;
             padding: 6px;
             border: 1px solid #999;
             background: #fff;
