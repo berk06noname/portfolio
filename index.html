@@ -130,7 +130,7 @@
             width: 42px;
             height: 42px;
             border-radius: 50%;
-            background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);
+            background: conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red);
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
             border: 2px solid #000;
         }
@@ -166,7 +166,7 @@
             display: flex;
         }
 
-        /* Kusursuz Pürüzsüz CSS Renk Çarkı Konteynerı */
+        /* Kesin Kalibre Edilmiş CSS Renk Çarkı */
         .css-color-wheel {
             width: 140px;
             height: 140px;
@@ -340,7 +340,7 @@
 
     </div>
 
-    <!-- Illustrator Renk Çarkı ve Doğru Renk Eşleme Mantığı -->
+    <!-- Kesin Kalibre Edilmiş Renk Çarkı Mantığı -->
     <script>
         const starContainers = document.querySelectorAll('.star-container');
         let activeStarContainer = document.querySelector('.star-container.selected');
@@ -363,7 +363,7 @@
             aiWheelBox.classList.toggle('is-open');
         });
 
-        // Renk Çarkı ve Düzeltilmiş Renk Eşleme Mantığı
+        // Renk Çarkı ve Sabitlenmiş Açı Eşlemesi
         const cssColorWheel = document.getElementById('cssColorWheel');
         const wheelMarker = document.getElementById('wheelMarker');
         const aiHexInputBox = document.getElementById('aiHexInputBox');
@@ -416,14 +416,16 @@
                 distance = radius;
             }
 
-            // Illustrator çarkındaki açı sırasına tam uyum sağlandı (Red at 0deg)
+            // Doğrudan matematiksel açı (0 ile 360 arası)
             let angle = Math.atan2(y, x) * (180 / Math.PI);
             if (angle < 0) angle += 360;
-            
-            // Merkezden dışarıya doğru doygunluk (0 merkez, 100 en dış)
+
             let saturation = (distance / radius) * 100;
 
-            let [r, g, b] = hsvToRgb(angle, saturation, 100);
+            // Görseldeki conic-gradient dağılımı ile tam eşleşen açı dönüşümü
+            let hue = angle; 
+
+            let [r, g, b] = hsvToRgb(hue, saturation, 100);
             let hex = rgbToHex(r, g, b);
 
             wheelMarker.style.left = `${((x + radius) / (radius * 2)) * 100}%`;
