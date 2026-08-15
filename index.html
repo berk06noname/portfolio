@@ -1,258 +1,770 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logo Sunum Paneli</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="color-scheme" content="light" />
+<title>Proof Stüdyo — Logo Onay Aracı</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Poppins:wght@400;600;700&family=Playfair+Display:wght@600;700&family=Space+Grotesk:wght@500;700&family=Bebas+Neue&family=Oswald:wght@500;600&family=DM+Serif+Display&family=Cormorant+Garamond:wght@600;700&family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F2F1EA;
+    --paper-dot: rgba(28,27,24,0.07);
+    --panel: #FFFDF9;
+    --ink: #1C1B18;
+    --ink-soft: #5C594E;
+    --line: #D6D2C4;
+    --stamp-green: #2E6B4E;
+    --stamp-green-bg: #E3EEE7;
+    --stamp-red: #A6392C;
+    --stamp-red-bg: #F4E4E0;
+    --stamp-amber: #8C7A3E;
+    --stamp-amber-bg: #EFE9D6;
+    --radius: 2px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin:0; padding:0; }
+  body {
+    background-color: var(--paper);
+    background-image: radial-gradient(var(--paper-dot) 1px, transparent 1px);
+    background-size: 22px 22px;
+    color: var(--ink);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  button, input, select, textarea { font-family: inherit; font-size: inherit; color: inherit; }
+  button { -webkit-tap-highlight-color: transparent; }
+  :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
-        body {
-            /* Sayfanın varsayılan arka planı */
-            background-color: #ffffff; 
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            transition: background-color 0.3s ease;
-        }
+  .shell { max-width: 1040px; margin: 0 auto; padding: 0 24px 80px; }
 
-        /* --- ÜST KISIM: LOGO ÖNİZLEME ALANI --- */
-        #preview-area {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 50px;
-        }
+  .topbar { max-width: 1040px; margin: 0 auto; display:flex; align-items:center; justify-content:space-between; padding: 28px 24px 20px; }
+  .wordmark { display:flex; align-items:baseline; gap:8px; }
+  .wm-main { font-family:'Big Shoulders Display',sans-serif; font-weight:800; font-size:26px; letter-spacing:0.02em; }
+  .wm-sub { font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.14em; color:var(--ink-soft); text-transform:uppercase; }
 
-        #logo-box {
-            /* Logonun arkasındaki kutu */
-            background-color: #3b0909; 
-            width: 300px;
-            height: 300px;
-            border-radius: 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: background-color 0.3s ease;
-        }
+  .eyebrow { font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink-soft); margin:0 0 10px; }
+  .h1 { font-family:'Big Shoulders Display',sans-serif; font-weight:800; font-size:clamp(34px,5vw,54px); line-height:1.02; margin:0 0 18px; letter-spacing:-0.01em; }
+  .h2 { font-family:'Big Shoulders Display',sans-serif; font-weight:700; font-size:26px; margin:0; letter-spacing:-0.005em; }
+  .lead { font-size:16px; color:var(--ink-soft); max-width:520px; margin:0; }
 
-        /* Sizin ekleyeceğiniz SVG'nin boyut ayarı */
-        #logo-box svg {
-            width: 60%;
-            height: 60%;
-            transition: fill 0.3s ease;
-        }
+  .hero { padding: 12px 0 40px; }
+  .hero-narrow { max-width:520px; }
 
+  .panel { position:relative; background:var(--panel); border:1px solid var(--line); padding:28px; }
+  .crop { position:absolute; width:12px; height:12px; pointer-events:none; }
+  .crop.tl { top:-1px; left:-1px; border-top:2px solid var(--ink); border-left:2px solid var(--ink); }
+  .crop.tr { top:-1px; right:-1px; border-top:2px solid var(--ink); border-right:2px solid var(--ink); }
+  .crop.bl { bottom:-1px; left:-1px; border-bottom:2px solid var(--ink); border-left:2px solid var(--ink); }
+  .crop.br { bottom:-1px; right:-1px; border-bottom:2px solid var(--ink); border-right:2px solid var(--ink); }
 
-        /* --- ALT KISIM: KONTROL PANELİ --- */
-        #control-panel {
-            background-color: #9ea622; /* Görseldeki yeşilimsi sarı ton */
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 2px solid rgba(0,0,0,0.1);
-            flex-wrap: wrap;
-            gap: 20px;
-        }
+  .role-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .role-card { text-align:left; cursor:pointer; transition:transform .15s ease, box-shadow .15s ease; width:100%; }
+  @media (prefers-reduced-motion: no-preference) {
+    .role-card:hover { transform:translateY(-3px); box-shadow:0 10px 24px rgba(28,27,24,0.08); }
+  }
+  .role-icon { color:var(--ink); display:block; margin-bottom:16px; }
+  .role-card p { color:var(--ink-soft); margin:10px 0 18px; }
+  .role-cta { font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.06em; text-transform:uppercase; }
 
-        /* Sol Taraf: HEX Kod Gösterimi */
-        .hex-display-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+  .btn { font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:0.06em; text-transform:uppercase; padding:12px 20px; border:1.5px solid var(--ink); background:transparent; color:var(--ink); cursor:pointer; border-radius:var(--radius); }
+  .btn-primary { background:var(--ink); color:var(--panel); }
+  .btn-ghost { border-color:transparent; padding:8px 4px; }
+  .btn-wide { width:100%; padding:14px; margin-top:6px; }
+  .btn:disabled { opacity:.5; cursor:not-allowed; }
 
-        .color-preview-box {
-            width: 80px;
-            height: 80px;
-            background-color: #ffffff;
-            border: 2px solid #333;
-            border-radius: 8px;
-        }
+  .panel-head { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:22px; flex-wrap:wrap; }
 
-        .hex-text {
-            background-color: rgba(255, 255, 255, 0.7);
-            padding: 5px 10px;
-            font-weight: bold;
-            border-radius: 4px;
-            font-size: 14px;
-        }
+  .project-list { padding:0; }
+  .project-row { display:flex; align-items:center; justify-content:space-between; width:100%; text-align:left; background:none; border:none; border-bottom:1px solid var(--line); padding:20px 28px; cursor:pointer; }
+  .project-row:last-child { border-bottom:none; }
+  .project-row:hover { background:var(--paper); }
+  .project-row-main { display:flex; flex-direction:column; gap:4px; }
+  .project-name { font-weight:600; }
+  .project-code { font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink-soft); letter-spacing:.06em; }
+  .project-row-meta { display:flex; align-items:center; gap:14px; }
+  .project-date { font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink-soft); }
 
-        /* Sağ Taraf: Renk Seçiciler */
-        .color-controls {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+  .empty-state { text-align:center; padding:56px 28px; }
+  .empty-state p { color:var(--ink-soft); margin-bottom:18px; }
 
-        .control-group {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 15px;
-            background: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
+  .stamp { display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; letter-spacing:.08em; padding:5px 10px; border:1.5px solid; border-radius:var(--radius); transform:rotate(-2deg); white-space:nowrap; }
+  .stamp-green { color:var(--stamp-green); border-color:var(--stamp-green); background:var(--stamp-green-bg); }
+  .stamp-red { color:var(--stamp-red); border-color:var(--stamp-red); background:var(--stamp-red-bg); }
+  .stamp-amber { color:var(--stamp-amber); border-color:var(--stamp-amber); background:var(--stamp-amber-bg); border-style:dashed; }
 
-        .control-group span {
-            font-size: 14px;
-            font-weight: 600;
-            color: #333;
-        }
+  .form-panel { max-width:560px; display:flex; flex-direction:column; gap:6px; }
+  .form-panel-narrow { max-width:420px; }
+  .field-label { font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.1em; color:var(--ink-soft); margin:14px 0 6px; display:block; }
+  .text-input { width:100%; padding:12px 14px; border:1.5px solid var(--line); background:var(--paper); border-radius:var(--radius); }
+  .text-input:focus { border-color:var(--ink); }
+  textarea.text-input { resize:vertical; }
+  .code-input { font-family:'IBM Plex Mono',monospace; font-size:24px; letter-spacing:.3em; text-align:center; text-transform:uppercase; }
 
-        /* Renk seçici input'un görünümünü düzenleme */
-        input[type="color"] {
-            -webkit-appearance: none;
-            border: none;
-            width: 60px;
-            height: 30px;
-            border-radius: 15px;
-            cursor: pointer;
-            padding: 0;
-            background: none;
-        }
-        input[type="color"]::-webkit-color-swatch-wrapper {
-            padding: 0;
-        }
-        input[type="color"]::-webkit-color-swatch {
-            border: 2px solid #333;
-            border-radius: 15px;
-        }
+  .dropzone { display:flex; align-items:center; justify-content:center; border:1.5px dashed var(--line); padding:28px; text-align:center; cursor:pointer; color:var(--ink-soft); }
+  .dropzone:hover { border-color:var(--ink); color:var(--ink); }
+  .mini-preview { margin-top:16px; border:1px solid var(--line); background:var(--panel); padding:16px; display:flex; align-items:center; justify-content:center; min-height:110px; }
+  .mini-preview svg { max-width:100%; height:auto; }
 
-        /* --- SOSYAL MEDYA İKONLARI ALANI --- */
-        #footer {
-            background-color: #ffffff;
-            text-align: center;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-        .social-icon {
-            width: 40px;
-            height: 40px;
-            background-color: #007bff;
-            color: white;
-            border-radius: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 20px;
-            cursor: pointer;
-        }
-        .social-icon.insta { background-color: #e1306c; }
-        .social-icon.wp { background-color: #25d366; }
-        .social-icon.tw { background-color: #1da1f2; }
-    </style>
+  .detail-meta { display:flex; align-items:center; gap:14px; margin-bottom:22px; flex-wrap:wrap; }
+  .code-chip { display:flex; align-items:center; gap:10px; border:1.5px solid var(--ink); background:var(--panel); padding:8px 14px; cursor:pointer; border-radius:var(--radius); }
+  .code-chip span:first-child { font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-soft); text-transform:uppercase; }
+  .code-chip strong { font-family:'IBM Plex Mono',monospace; letter-spacing:.1em; }
+  .copy-label { font-family:'IBM Plex Mono',monospace; font-size:11px; text-decoration:underline; }
+
+  .proof-panel { margin-bottom:22px; }
+  .proof-label { font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-soft); margin:0 0 16px; }
+  .proof-canvas { position:relative; min-height:320px; display:flex; align-items:center; justify-content:center; padding:32px; cursor:crosshair; background: repeating-linear-gradient(45deg, transparent, transparent 11px, rgba(28,27,24,.025) 11px, rgba(28,27,24,.025) 12px); overflow:hidden; }
+  .proof-canvas svg { position:relative; z-index:1; max-width:100%; height:auto; }
+
+  .pin { position:absolute; transform:translate(-50%,-50%); width:22px; height:22px; border-radius:50%; background:var(--stamp-red); color:#fff; border:2px solid var(--panel); font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:3; box-shadow:0 2px 6px rgba(0,0,0,.2); padding:0; }
+
+  .marker-popover { position:absolute; transform:translate(-50%, 10px); width:220px; background:var(--panel); border:1.5px solid var(--ink); padding:12px; z-index:4; box-shadow:0 8px 20px rgba(0,0,0,.15); }
+  .marker-popover textarea { width:100%; border:1px solid var(--line); padding:8px; font-family:inherit; font-size:13px; resize:none; }
+  .popover-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:8px; }
+  .btn-mini { font-family:'IBM Plex Mono',monospace; font-size:11px; text-transform:uppercase; padding:6px 10px; border:1px solid var(--line); background:transparent; cursor:pointer; }
+  .btn-mini-primary { border-color:var(--ink); background:var(--ink); color:var(--panel); }
+
+  .review-grid { display:grid; grid-template-columns:1.3fr 1fr; gap:24px; align-items:start; }
+  .controls { display:flex; flex-direction:column; gap:16px; }
+  .control-card { padding:20px; }
+  .control-head { display:flex; align-items:center; justify-content:space-between; }
+  .link-btn { background:none; border:none; font-family:'IBM Plex Mono',monospace; font-size:11px; text-decoration:underline; cursor:pointer; color:var(--ink-soft); padding:0; }
+  .swatch-row { display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; }
+  .swatch { width:30px; height:30px; border-radius:50%; border:2px solid var(--line); cursor:pointer; padding:0; }
+  .swatch.active { border-color:var(--ink); box-shadow:0 0 0 2px var(--panel), 0 0 0 4px var(--ink); }
+  .swatch-custom { border:2px solid var(--line); padding:2px; background:var(--panel); }
+
+  .marker-edit-list, .summary-list, .marker-list { list-style:none; margin:10px 0 0; padding:0; display:flex; flex-direction:column; gap:8px; }
+  .marker-edit-list li { display:flex; align-items:center; gap:8px; font-size:13px; }
+  .marker-num { display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:50%; background:var(--stamp-red); color:#fff; font-family:'IBM Plex Mono',monospace; font-size:10px; flex-shrink:0; }
+  .marker-note { flex:1; }
+  .marker-del { background:none; border:none; color:var(--ink-soft); text-decoration:underline; cursor:pointer; font-size:12px; padding:0; }
+  .marker-list li { font-size:13px; display:flex; gap:8px; align-items:flex-start; }
+  .summary-list li { font-size:14px; }
+
+  .decision-row { display:flex; gap:12px; }
+  .stamp-btn { flex:1; font-family:'Big Shoulders Display',sans-serif; font-weight:700; font-size:16px; letter-spacing:.04em; text-transform:uppercase; padding:16px; border:2px solid; background:transparent; cursor:pointer; border-radius:var(--radius); }
+  .stamp-btn-green { color:var(--stamp-green); border-color:var(--stamp-green); }
+  .stamp-btn-green:hover { background:var(--stamp-green-bg); }
+  .stamp-btn-red { color:var(--stamp-red); border-color:var(--stamp-red); }
+  .stamp-btn-red:hover { background:var(--stamp-red-bg); }
+  .stamp-btn:disabled { opacity:.5; cursor:not-allowed; }
+
+  .feedback-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+  .info-card p:first-child { margin-bottom:8px; }
+  .color-dot { display:inline-block; width:12px; height:12px; border-radius:50%; vertical-align:middle; margin-right:6px; border:1px solid var(--line); }
+  .marker-list-panel, .comment-card { margin-bottom:16px; }
+  .comment-text { font-style:italic; color:var(--ink-soft); margin:0; }
+
+  .hint { font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink-soft); }
+  .hint-notice { background:var(--stamp-amber-bg); border:1px solid var(--stamp-amber); padding:10px 14px; margin-bottom:16px; }
+  .error-text { color:var(--stamp-red); font-size:13px; margin:8px 0; }
+
+  @media (max-width: 760px) {
+    .role-grid { grid-template-columns:1fr; }
+    .review-grid { grid-template-columns:1fr; }
+    .feedback-grid { grid-template-columns:1fr; }
+  }
+</style>
 </head>
 <body>
+<div id="app"></div>
+<script>
+  var APP = document.getElementById('app');
 
-    <!-- ÜST KISIM: LOGO GÖRÜNÜMÜ -->
-    <div id="preview-area">
-        <div id="logo-box">
-            
-            <!-- BURAYA KENDİ SVG LOGONUZU YAPIŞTIRACAKSINIZ -->
-            <!-- Örnek olarak Ai yazan bir SVG ekledim -->
-            <!-- ÖNEMLİ: Renginin değişmesini istediğiniz path veya text etiketine id="logo-vector" eklemelisiniz! -->
-            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <text id="logo-vector" x="50" y="55" font-family="Arial, sans-serif" font-weight="900" font-size="55" fill="#f39200" text-anchor="middle" dominant-baseline="middle">Ai</text>
-            </svg>
-            <!-- SVG BİTİŞİ -->
+  var ICON_DESIGNER = '<svg viewBox="0 0 40 40" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 32 L28 12 L32 16 L12 36 Z"/><path d="M24 16 L28 20"/><path d="M8 32 L6 36 L10 34 Z"/></svg>';
+  var ICON_CLIENT = '<svg viewBox="0 0 40 40" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="6" y="10" width="28" height="20" rx="2"/><circle cx="20" cy="18" r="4"/><path d="M12 26 Q20 21 28 26"/></svg>';
 
-        </div>
-    </div>
+  var state = {
+    screen: 'home',
+    loading: false,
+    error: null,
+    designerProjects: [],
+    activeProject: null,
+    activeCode: null,
+    review: null
+  };
 
-    <!-- ALT KISIM: RENK KONTROL PANELİ -->
-    <div id="control-panel">
-        
-        <!-- Seçilen Rengin Hex Kodunu Gösteren Kutu -->
-        <div class="hex-display-container">
-            <div class="color-preview-box" id="active-color-box"></div>
-            <div class="hex-text">HEX CODE: <span id="hex-value">#ffffff</span></div>
-        </div>
+  var newProjectDraft = { name: '', svgRaw: null, fileName: '', error: null };
 
-        <!-- Renk Seçim Ayarları -->
-        <div class="color-controls">
-            <label class="control-group">
-                <span>Ana Arka Plan Rengi:</span>
-                <input type="color" id="page-bg-color" value="#ffffff">
-            </label>
-            
-            <label class="control-group">
-                <span>Logo Arka Planı (Kutu):</span>
-                <input type="color" id="box-bg-color" value="#3b0909">
-            </label>
+  function esc(str) {
+    if (str === null || str === undefined) return '';
+    return String(str).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
 
-            <label class="control-group">
-                <span>Logo Rengi (Vektör):</span>
-                <input type="color" id="vector-color" value="#f39200">
-            </label>
-        </div>
+  function genCode() {
+    var chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+    var code = '';
+    for (var i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+    return code;
+  }
 
-    </div>
+  async function generateUniqueCode() {
+    for (var i = 0; i < 8; i++) {
+      var code = genCode();
+      try {
+        var existing = await window.storage.get('project:' + code, true);
+        if (!existing) return code;
+      } catch (e) {
+        return code;
+      }
+    }
+    return genCode() + Date.now().toString(36).slice(-2);
+  }
 
-    <!-- SOSYAL MEDYA İKONLARI -->
-    <div id="footer">
-        <div class="social-icon">🎨</div>
-        <div class="social-icon insta">📸</div>
-        <div class="social-icon wp">💬</div>
-        <div class="social-icon tw">🐦</div>
-    </div>
+  function sanitizeSvg(raw) {
+    return raw
+      .replace(/<script[\s\S]*?<\/script>/gi, '')
+      .replace(/ on\w+="[^"]*"/gi, '')
+      .replace(/ on\w+='[^']*'/gi, '');
+  }
 
-    <!-- JAVASCRIPT KODLARI (İnteraktiflik için) -->
-    <script>
-        // HTML elementlerini seçiyoruz
-        const pageBgInput = document.getElementById('page-bg-color');
-        const boxBgInput = document.getElementById('box-bg-color');
-        const vectorColorInput = document.getElementById('vector-color');
-        
-        const bodyElement = document.body;
-        const logoBox = document.getElementById('logo-box');
-        const logoVector = document.getElementById('logo-vector');
-        
-        const activeColorBox = document.getElementById('active-color-box');
-        const hexValueText = document.getElementById('hex-value');
+  function formatDate(ts) {
+    try {
+      return new Date(ts).toLocaleDateString('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' });
+    } catch (e) {
+      return '';
+    }
+  }
 
-        // Hex kodunu güncelleyen fonksiyon
-        function updateHexDisplay(colorValue) {
-            activeColorBox.style.backgroundColor = colorValue;
-            hexValueText.textContent = colorValue.toUpperCase();
+  function statusBadge(status) {
+    if (status === 'approved') return '<span class="stamp stamp-green">ONAYLANDI</span>';
+    if (status === 'revision') return '<span class="stamp stamp-red">REVİZE İSTENDİ</span>';
+    return '<span class="stamp stamp-amber">BEKLİYOR</span>';
+  }
+
+  function corners() {
+    return '<span class="crop tl"></span><span class="crop tr"></span><span class="crop bl"></span><span class="crop br"></span>';
+  }
+
+  function buildStyledSvg(svgRaw, color, font, maxHeight) {
+    if (!svgRaw) return '';
+    maxHeight = maxHeight || 340;
+    var wrapper = document.createElement('div');
+    wrapper.innerHTML = svgRaw;
+    var svg = wrapper.querySelector('svg');
+    if (!svg) return svgRaw;
+    var drawableTags = ['path', 'circle', 'rect', 'polygon', 'polyline', 'ellipse', 'text', 'tspan', 'line'];
+    if (color) {
+      svg.querySelectorAll('*').forEach(function (el) {
+        var tag = el.tagName ? el.tagName.toLowerCase() : '';
+        var fillAttr = el.getAttribute ? el.getAttribute('fill') : null;
+        var looksDrawable = drawableTags.indexOf(tag) !== -1;
+        if ((fillAttr && fillAttr.toLowerCase() !== 'none') || (!fillAttr && looksDrawable)) {
+          el.style.setProperty('fill', color, 'important');
         }
+        var strokeAttr = el.getAttribute ? el.getAttribute('stroke') : null;
+        if (strokeAttr && strokeAttr.toLowerCase() !== 'none') {
+          el.style.setProperty('stroke', color, 'important');
+        }
+      });
+    }
+    if (font) {
+      svg.querySelectorAll('text, tspan').forEach(function (el) {
+        el.style.setProperty('font-family', "'" + font + "', sans-serif", 'important');
+      });
+    }
+    svg.style.maxWidth = '100%';
+    svg.style.maxHeight = maxHeight + 'px';
+    svg.style.width = 'auto';
+    svg.style.height = 'auto';
+    svg.style.display = 'block';
+    return wrapper.innerHTML;
+  }
 
-        // 1. Ana Arka Plan Değiştiğinde
-        pageBgInput.addEventListener('input', function(e) {
-            bodyElement.style.backgroundColor = e.target.value;
-            updateHexDisplay(e.target.value);
-        });
+  function detectHasText(svgRaw) {
+    var wrapper = document.createElement('div');
+    wrapper.innerHTML = svgRaw;
+    return wrapper.querySelectorAll('text, tspan').length > 0;
+  }
 
-        // 2. Kutu Arka Planı Değiştiğinde
-        boxBgInput.addEventListener('input', function(e) {
-            logoBox.style.backgroundColor = e.target.value;
-            updateHexDisplay(e.target.value);
-        });
+  function renderMarkerPins(markers, editable) {
+    return markers.map(function (m) {
+      if (editable) {
+        return '<button type="button" class="pin" style="left:' + m.x + '%;top:' + m.y + '%;" data-action="pin-click" data-id="' + m.id + '" title="' + esc(m.note) + '"><span>' + m.id + '</span></button>';
+      }
+      return '<div class="pin" style="left:' + m.x + '%;top:' + m.y + '%;" title="' + esc(m.note) + '"><span>' + m.id + '</span></div>';
+    }).join('');
+  }
 
-        // 3. Logonun Kendi Rengi Değiştiğinde
-        vectorColorInput.addEventListener('input', function(e) {
-            // Eğer logonuz SVG path'lerden oluşuyorsa fill veya stroke'u değiştirir
-            if(logoVector) {
-                logoVector.setAttribute('fill', e.target.value);
-            }
-            updateHexDisplay(e.target.value);
-        });
+  function renderMarkerPopover(pm) {
+    if (!pm) return '';
+    return '<div class="marker-popover" style="left:' + pm.x + '%;top:' + pm.y + '%;">' +
+      '<textarea id="markerNoteInput" placeholder="Bu kısımla ilgili notunuz…" rows="3">' + esc(pm.note || '') + '</textarea>' +
+      '<div class="popover-actions">' +
+        '<button type="button" class="btn-mini" data-action="marker-cancel">İptal</button>' +
+        '<button type="button" class="btn-mini btn-mini-primary" data-action="marker-save">Kaydet</button>' +
+      '</div></div>';
+  }
 
-        // Başlangıçta ana arka plan rengini HEX panelinde göster
-        updateHexDisplay(pageBgInput.value);
-    </script>
+  function renderHeader() {
+    var showHome = state.screen !== 'home';
+    return '<header class="topbar">' +
+      '<div class="wordmark"><span class="wm-main">PROOF</span><span class="wm-sub">STÜDYO</span></div>' +
+      (showHome ? '<button type="button" class="btn btn-ghost" data-action="go-home">‹ Ana Sayfa</button>' : '') +
+      '</header>';
+  }
 
+  function renderHome() {
+    return '' +
+    '<section class="hero">' +
+      '<p class="eyebrow">PROOF STÜDYO</p>' +
+      '<h1 class="h1">Logo onayını<br>tek ekranda toplayın</h1>' +
+      '<p class="lead">Müşterileriniz rengi dener, fontu dener, beğenmediği yeri işaretler; siz de tek bakışta onay ya da revizyon kararını görürsünüz.</p>' +
+    '</section>' +
+    '<section class="role-grid">' +
+      '<button type="button" class="panel role-card" data-action="go-designer">' + corners() +
+        '<span class="role-icon">' + ICON_DESIGNER + '</span>' +
+        '<h2 class="h2">Tasarımcıyım</h2>' +
+        '<p>Logonuzu yükleyin, müşterinize özel bir kod oluşturun, gelen geri bildirimleri buradan takip edin.</p>' +
+        '<span class="role-cta">Panele git →</span>' +
+      '</button>' +
+      '<button type="button" class="panel role-card" data-action="go-client">' + corners() +
+        '<span class="role-icon">' + ICON_CLIENT + '</span>' +
+        '<h2 class="h2">Bana kod verildi</h2>' +
+        '<p>Tasarımcınızdan aldığınız 6 haneli kodu girin; logoyu inceleyin, renk ve font deneyin, notlarınızı bırakın.</p>' +
+        '<span class="role-cta">Kodu gir →</span>' +
+      '</button>' +
+    '</section>';
+  }
+
+  function renderDesignerDashboard() {
+    var projects = state.designerProjects || [];
+    var rows = projects.map(function (p) {
+      return '<button type="button" class="project-row" data-action="open-project" data-code="' + p.code + '">' +
+        '<span class="project-row-main"><span class="project-name">' + esc(p.name) + '</span><span class="project-code">' + p.code + '</span></span>' +
+        '<span class="project-row-meta"><span class="project-date">' + formatDate(p.createdAt) + '</span>' + statusBadge(p.status) + '</span>' +
+      '</button>';
+    }).join('');
+    var body = '';
+    if (projects.length) {
+      body = '<div class="project-list panel">' + corners() + rows + '</div>';
+    } else if (!state.loading) {
+      body = '<div class="panel empty-state">' + corners() + '<p>Henüz proje yok.</p><button type="button" class="btn btn-primary" data-action="new-project">İlk logonuzu yükleyin</button></div>';
+    }
+    return '' +
+    '<section class="panel-head"><div><p class="eyebrow">TASARIMCI PANELİ</p><h1 class="h2">Projeleriniz</h1></div>' +
+      '<button type="button" class="btn btn-primary" data-action="new-project">+ Yeni Proje</button></section>' +
+    (state.loading ? '<p class="hint">Yükleniyor…</p>' : '') +
+    (state.error ? '<p class="error-text">' + esc(state.error) + '</p>' : '') +
+    body;
+  }
+
+  function renderDesignerNew() {
+    var d = newProjectDraft;
+    return '' +
+    '<section class="panel-head"><div><p class="eyebrow">YENİ PROJE</p><h1 class="h2">Logo yükleyin</h1></div>' +
+      '<button type="button" class="btn btn-ghost" data-action="back-dashboard">‹ Vazgeç</button></section>' +
+    '<div class="panel form-panel">' + corners() +
+      '<label class="field-label" for="projectNameInput">Müşteri / Proje Adı</label>' +
+      '<input type="text" id="projectNameInput" class="text-input" placeholder="Örn. Kahve Dükkanı A.Ş." value="' + esc(d.name || '') + '" />' +
+      '<label class="field-label">Logo Dosyası (.svg)</label>' +
+      '<label class="dropzone" for="svgFileInput">' +
+        '<input type="file" id="svgFileInput" accept=".svg,image/svg+xml" hidden />' +
+        '<span>' + (d.fileName ? '📄 ' + esc(d.fileName) : 'SVG dosyası seçmek için tıklayın') + '</span>' +
+      '</label>' +
+      (d.svgRaw ? '<div class="mini-preview">' + buildStyledSvg(d.svgRaw, null, null, 110) + '</div>' : '') +
+      (d.error ? '<p class="error-text">' + esc(d.error) + '</p>' : '') +
+      '<button type="button" class="btn btn-primary btn-wide" data-action="create-project" ' + (state.loading ? 'disabled' : '') + '>' + (state.loading ? 'Oluşturuluyor…' : 'Proje Oluştur ve Kod Al') + '</button>' +
+    '</div>';
+  }
+
+  function renderDesignerDetail() {
+    var p = state.activeProject;
+    if (!p) return '<p class="hint">Proje yükleniyor…</p>';
+    var fb = p.feedback;
+    var svgToShow = buildStyledSvg(p.svgContent, fb ? fb.color : null, fb ? fb.font : null, 340);
+    var markers = (fb && fb.markers) ? fb.markers : [];
+    var out = '' +
+    '<section class="panel-head"><div><p class="eyebrow">TASARIMCI PANELİ</p><h1 class="h2">' + esc(p.name) + '</h1></div>' +
+      '<button type="button" class="btn btn-ghost" data-action="back-dashboard">‹ Projelere Dön</button></section>' +
+    '<div class="detail-meta">' +
+      '<button type="button" class="code-chip" data-action="copy-code" data-code="' + p.code + '"><span>Müşteri Kodu</span><strong>' + p.code + '</strong><span class="copy-label">Kopyala</span></button>' +
+      statusBadge(p.status) +
+    '</div>' +
+    '<div class="panel proof-panel">' + corners() +
+      '<p class="proof-label">' + (fb ? 'Müşterinin Değerlendirdiği Versiyon' : 'Yüklenen Logo') + '</p>' +
+      '<div class="proof-canvas">' + svgToShow + renderMarkerPins(markers, false) + '</div>' +
+    '</div>';
+
+    if (fb) {
+      out += '<div class="feedback-grid">' +
+        '<div class="panel info-card">' + corners() + '<p class="field-label">Renk</p><p>' + (fb.color ? '<span class="color-dot" style="background:' + fb.color + '"></span>' + fb.color : 'Orijinal renk korundu') + '</p></div>' +
+        '<div class="panel info-card">' + corners() + '<p class="field-label">Font</p><p>' + (fb.font ? esc(fb.font) : 'Orijinal font korundu') + '</p></div>' +
+      '</div>';
+      if (markers.length) {
+        out += '<div class="panel marker-list-panel">' + corners() + '<p class="field-label">İşaretlemeler</p><ol class="marker-list">' +
+          markers.map(function (m) { return '<li><span class="marker-num">' + m.id + '</span> ' + esc(m.note) + '</li>'; }).join('') +
+        '</ol></div>';
+      }
+      if (fb.comment) {
+        out += '<div class="panel comment-card">' + corners() + '<p class="field-label">Genel Not</p><p class="comment-text">"' + esc(fb.comment) + '"</p></div>';
+      }
+      out += '<p class="hint">Gönderim: ' + formatDate(fb.submittedAt) + '</p>';
+    } else {
+      out += '<div class="panel empty-state">' + corners() + '<p>Müşteri henüz görüş bildirmedi.</p><p class="hint">Yukarıdaki kodu, bu artifact linkiyle birlikte müşterinize gönderin.</p></div>';
+    }
+    return out;
+  }
+
+  function renderClientEnter() {
+    return '' +
+    '<section class="hero hero-narrow"><p class="eyebrow">MÜŞTERİ İNCELEMESİ</p><h1 class="h2">Kodunuzu girin</h1>' +
+      '<p class="lead">Tasarımcınızın size gönderdiği 6 haneli kodu aşağıya yazın.</p></section>' +
+    '<div class="panel form-panel form-panel-narrow">' + corners() +
+      '<input type="text" id="codeInput" class="text-input code-input" placeholder="AB12CD" maxlength="6" autocomplete="off" autocapitalize="characters" />' +
+      (state.error ? '<p class="error-text">' + esc(state.error) + '</p>' : '') +
+      '<button type="button" class="btn btn-primary btn-wide" data-action="view-client-project" ' + (state.loading ? 'disabled' : '') + '>' + (state.loading ? 'Aranıyor…' : 'Logoyu Görüntüle') + '</button>' +
+    '</div>';
+  }
+
+  function renderClientReview() {
+    var p = state.activeProject;
+    var r = state.review;
+    var svgHtml = buildStyledSvg(p.svgContent, r.color, r.font, 340);
+    var swatches = ['#1C1B18', '#FFFDF9', '#2E6B4E', '#A6392C', '#1F4E8C', '#8C7A3E', '#5B4B8A', '#707070'];
+    var fonts = ['Poppins', 'Playfair Display', 'Space Grotesk', 'Bebas Neue', 'Oswald', 'DM Serif Display', 'Cormorant Garamond', 'Montserrat'];
+    var alreadyDecided = p.status !== 'pending';
+    var out = '' +
+    '<section class="panel-head"><div><p class="eyebrow">PROOF · ' + p.code + '</p><h1 class="h2">' + esc(p.name) + '</h1></div></section>' +
+    (alreadyDecided ? '<p class="hint hint-notice">Bu logo için daha önce bir karar iletildi (' + (p.status === 'approved' ? 'Onaylandı' : 'Revize İstendi') + '). Aşağıdan güncelleyebilirsiniz.</p>' : '') +
+    '<div class="review-grid">' +
+      '<div class="panel proof-panel">' + corners() +
+        '<p class="proof-label">Logonun üzerine tıklayarak not bırakabilirsiniz</p>' +
+        '<div class="proof-canvas" data-action="canvas-click">' + svgHtml + renderMarkerPins(r.markers, true) + renderMarkerPopover(r.pendingMarker) + '</div>' +
+      '</div>' +
+      '<div class="controls">' +
+        '<div class="panel control-card">' + corners() +
+          '<div class="control-head"><p class="field-label" style="margin:0;">Renk</p><button type="button" class="link-btn" data-action="reset-color">Orijinal</button></div>' +
+          '<div class="swatch-row">' +
+            swatches.map(function (c) { return '<button type="button" class="swatch ' + (r.color === c ? 'active' : '') + '" style="background:' + c + '" data-action="swatch" data-color="' + c + '" aria-label="' + c + '"></button>'; }).join('') +
+            '<input type="color" id="customColorInput" class="swatch swatch-custom" value="' + (r.color || '#1c1b18') + '" />' +
+          '</div>' +
+        '</div>' +
+        (r.hasText ? (
+          '<div class="panel control-card">' + corners() +
+            '<div class="control-head"><p class="field-label" style="margin:0;">Font</p><button type="button" class="link-btn" data-action="reset-font">Orijinal</button></div>' +
+            '<select id="fontSelect" class="text-input" style="margin-top:10px;">' +
+              '<option value="original" ' + (!r.font ? 'selected' : '') + '>Orijinal font</option>' +
+              fonts.map(function (f) { return '<option value="' + f + '" ' + (r.font === f ? 'selected' : '') + '>' + f + '</option>'; }).join('') +
+            '</select>' +
+          '</div>'
+        ) : '') +
+        '<div class="panel control-card">' + corners() +
+          '<p class="field-label" style="margin-top:0;">İşaretlemeler' + (r.markers.length ? ' (' + r.markers.length + ')' : '') + '</p>' +
+          (r.markers.length ? (
+            '<ul class="marker-edit-list">' +
+            r.markers.map(function (m) { return '<li><span class="marker-num">' + m.id + '</span><span class="marker-note">' + esc(m.note) + '</span><button type="button" class="marker-del" data-action="marker-delete" data-id="' + m.id + '">Sil</button></li>'; }).join('') +
+            '</ul>'
+          ) : '<p class="hint">Logonun üzerine tıklayarak başlayın.</p>') +
+        '</div>' +
+        '<div class="panel control-card">' + corners() +
+          '<label class="field-label" for="generalComment" style="margin-top:0;">Genel Not (opsiyonel)</label>' +
+          '<textarea id="generalComment" class="text-input" rows="3" placeholder="Eklemek istediğiniz bir şey var mı?">' + esc((p.feedback && p.feedback.comment) || '') + '</textarea>' +
+        '</div>' +
+        (state.error ? '<p class="error-text">' + esc(state.error) + '</p>' : '') +
+        '<div class="decision-row">' +
+          '<button type="button" class="stamp-btn stamp-btn-green" data-action="decision-approve" ' + (state.loading ? 'disabled' : '') + '>✓ Onayla</button>' +
+          '<button type="button" class="stamp-btn stamp-btn-red" data-action="decision-revise" ' + (state.loading ? 'disabled' : '') + '>✕ Revize İste</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+    return out;
+  }
+
+  function renderClientDone() {
+    var p = state.activeProject;
+    var fb = p.feedback;
+    return '' +
+    '<section class="hero hero-narrow">' + statusBadge(p.status) +
+      '<h1 class="h2" style="margin-top:16px;">Görüşünüz iletildi</h1>' +
+      '<p class="lead">' + (p.status === 'approved' ? 'Logo onaylandı olarak işaretlendi. Tasarımcınız bilgilendirildi.' : 'Revizyon talebiniz tasarımcınıza iletildi.') + '</p>' +
+    '</section>' +
+    '<div class="panel form-panel">' + corners() +
+      '<p class="field-label" style="margin-top:0;">Özet</p>' +
+      '<ul class="summary-list">' +
+        '<li>Renk: ' + (fb.color ? fb.color : 'Orijinal') + '</li>' +
+        '<li>Font: ' + (fb.font ? esc(fb.font) : 'Orijinal') + '</li>' +
+        '<li>İşaretleme sayısı: ' + fb.markers.length + '</li>' +
+        (fb.comment ? '<li>Not: "' + esc(fb.comment) + '"</li>' : '') +
+      '</ul>' +
+    '</div>';
+  }
+
+  function render() {
+    var html = renderHeader() + '<main class="shell">';
+    switch (state.screen) {
+      case 'home': html += renderHome(); break;
+      case 'designerDashboard': html += renderDesignerDashboard(); break;
+      case 'designerNew': html += renderDesignerNew(); break;
+      case 'designerDetail': html += renderDesignerDetail(); break;
+      case 'clientEnter': html += renderClientEnter(); break;
+      case 'clientReview': html += renderClientReview(); break;
+      case 'clientDone': html += renderClientDone(); break;
+    }
+    html += '</main>';
+    APP.innerHTML = html;
+    if (state.screen === 'clientReview' && state.review && state.review.pendingMarker) {
+      var ta = document.getElementById('markerNoteInput');
+      if (ta) { ta.focus(); }
+    }
+  }
+
+  async function loadAllProjects() {
+    state.loading = true; state.error = null; render();
+    try {
+      var listRes = await window.storage.list('project:', true);
+      var keys = (listRes && listRes.keys) || [];
+      var items = [];
+      for (var i = 0; i < keys.length; i++) {
+        try {
+          var r = await window.storage.get(keys[i], true);
+          if (r && r.value) items.push(JSON.parse(r.value));
+        } catch (e) {}
+      }
+      items.sort(function (a, b) { return (b.createdAt || 0) - (a.createdAt || 0); });
+      state.designerProjects = items;
+    } catch (e) {
+      state.error = 'Projeler yüklenirken bir sorun oluştu.';
+    }
+    state.loading = false;
+    render();
+  }
+
+  async function openDesignerDetail(code) {
+    state.loading = true; state.error = null; render();
+    try {
+      var r = await window.storage.get('project:' + code, true);
+      if (!r || !r.value) {
+        state.error = 'Proje bulunamadı.'; state.screen = 'designerDashboard'; state.loading = false; render(); return;
+      }
+      state.activeProject = JSON.parse(r.value);
+      state.activeCode = code;
+      state.screen = 'designerDetail';
+    } catch (e) {
+      state.error = 'Proje yüklenirken hata oluştu.';
+    }
+    state.loading = false;
+    render();
+  }
+
+  async function handleCreateProject() {
+    var nameInput = document.getElementById('projectNameInput');
+    var name = nameInput ? nameInput.value.trim() : '';
+    if (!name) { newProjectDraft.error = 'Lütfen müşteri ya da proje adı girin.'; render(); return; }
+    if (!newProjectDraft.svgRaw) { newProjectDraft.error = 'Lütfen bir SVG logo dosyası yükleyin.'; render(); return; }
+    state.loading = true; newProjectDraft.error = null; render();
+    try {
+      var code = await generateUniqueCode();
+      var project = { code: code, name: name, svgContent: newProjectDraft.svgRaw, createdAt: Date.now(), status: 'pending', feedback: null };
+      await window.storage.set('project:' + code, JSON.stringify(project), true);
+      state.activeProject = project;
+      state.activeCode = code;
+      state.screen = 'designerDetail';
+      newProjectDraft = { name: '', svgRaw: null, fileName: '', error: null };
+    } catch (e) {
+      newProjectDraft.error = 'Proje oluşturulurken bir sorun oluştu, tekrar deneyin.';
+    }
+    state.loading = false;
+    render();
+  }
+
+  function handleFileSelect(e) {
+    var file = e.target.files && e.target.files[0];
+    if (!file) return;
+    if (!/\.svg$/i.test(file.name)) {
+      newProjectDraft.error = 'Lütfen bir .svg dosyası seçin.';
+      render();
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function (ev) {
+      var raw = String(ev.target.result || '');
+      if (raw.indexOf('<svg') === -1) {
+        newProjectDraft.error = 'Dosya geçerli bir SVG içermiyor gibi görünüyor.';
+        newProjectDraft.svgRaw = null;
+      } else {
+        newProjectDraft.svgRaw = sanitizeSvg(raw);
+        newProjectDraft.fileName = file.name;
+        newProjectDraft.error = null;
+      }
+      render();
+    };
+    reader.onerror = function () { newProjectDraft.error = 'Dosya okunamadı.'; render(); };
+    reader.readAsText(file);
+  }
+
+  function handleCopyCode(el) {
+    var code = el.getAttribute('data-code');
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code).then(function () {
+        var label = el.querySelector('.copy-label');
+        if (label) {
+          var orig = label.textContent;
+          label.textContent = 'Kopyalandı ✓';
+          setTimeout(function () { label.textContent = orig; }, 1500);
+        }
+      }).catch(function () {});
+    }
+  }
+
+  async function loadProjectByCode(code) {
+    state.loading = true; state.error = null; render();
+    try {
+      var r = await window.storage.get('project:' + code, true);
+      if (!r || !r.value) {
+        state.error = 'Kod bulunamadı. Lütfen tasarımcınızdan aldığınız kodu kontrol edin.';
+        state.loading = false; render(); return;
+      }
+      var project = JSON.parse(r.value);
+      var hasText = detectHasText(project.svgContent);
+      state.activeProject = project;
+      state.activeCode = code;
+      var fbMarkers = (project.feedback && project.feedback.markers) ? project.feedback.markers.map(function (m) { return { id: m.id, x: m.x, y: m.y, note: m.note }; }) : [];
+      var nextId = 1;
+      for (var i = 0; i < fbMarkers.length; i++) { if (fbMarkers[i].id >= nextId) nextId = fbMarkers[i].id + 1; }
+      state.review = {
+        color: project.feedback ? project.feedback.color : null,
+        font: project.feedback ? project.feedback.font : null,
+        markers: fbMarkers,
+        nextMarkerId: nextId,
+        pendingMarker: null,
+        hasText: hasText
+      };
+      state.screen = 'clientReview';
+    } catch (e) {
+      state.error = 'Kod bulunamadı ya da bir bağlantı sorunu oluştu.';
+    }
+    state.loading = false;
+    render();
+  }
+
+  function handleViewClientProject() {
+    var input = document.getElementById('codeInput');
+    var code = input ? input.value.trim() : '';
+    if (code.length < 4) { state.error = 'Lütfen 6 haneli kodu eksiksiz girin.'; render(); return; }
+    loadProjectByCode(code);
+  }
+
+  function handleCanvasClick(e, canvasEl) {
+    if (state.review.pendingMarker) return;
+    var rect = canvasEl.getBoundingClientRect();
+    var x = ((e.clientX - rect.left) / rect.width) * 100;
+    var y = ((e.clientY - rect.top) / rect.height) * 100;
+    x = Math.min(96, Math.max(4, x));
+    y = Math.min(92, Math.max(8, y));
+    state.review.pendingMarker = { x: x, y: y, note: '', editingId: null };
+    render();
+  }
+
+  function handlePinClick(e, pinEl) {
+    var id = Number(pinEl.getAttribute('data-id'));
+    var marker = state.review.markers.find(function (m) { return m.id === id; });
+    if (!marker) return;
+    state.review.pendingMarker = { x: marker.x, y: marker.y, note: marker.note, editingId: marker.id };
+    render();
+  }
+
+  function handleMarkerSave() {
+    var ta = document.getElementById('markerNoteInput');
+    var note = ta ? ta.value.trim() : '';
+    var pm = state.review.pendingMarker;
+    if (!note) { state.review.pendingMarker = null; render(); return; }
+    if (pm.editingId) {
+      var m = state.review.markers.find(function (m) { return m.id === pm.editingId; });
+      if (m) m.note = note;
+    } else {
+      state.review.markers.push({ id: state.review.nextMarkerId++, x: pm.x, y: pm.y, note: note });
+    }
+    state.review.pendingMarker = null;
+    render();
+  }
+
+  function handleMarkerDelete(idStr) {
+    var id = Number(idStr);
+    state.review.markers = state.review.markers.filter(function (m) { return m.id !== id; });
+    render();
+  }
+
+  async function submitDecision(decision) {
+    var commentEl = document.getElementById('generalComment');
+    var comment = commentEl ? commentEl.value.trim() : '';
+    var feedback = {
+      color: state.review.color,
+      font: state.review.font,
+      markers: state.review.markers,
+      comment: comment,
+      decision: decision,
+      submittedAt: Date.now()
+    };
+    var project = state.activeProject;
+    project.status = decision === 'approved' ? 'approved' : 'revision';
+    project.feedback = feedback;
+    state.loading = true; state.error = null; render();
+    try {
+      await window.storage.set('project:' + state.activeCode, JSON.stringify(project), true);
+      state.activeProject = project;
+      state.screen = 'clientDone';
+    } catch (e) {
+      state.error = 'Gönderilirken bir sorun oluştu, lütfen tekrar deneyin.';
+    }
+    state.loading = false;
+    render();
+  }
+
+  function handleAppClick(e) {
+    var actionEl = e.target.closest('[data-action]');
+    if (!actionEl) return;
+    var action = actionEl.getAttribute('data-action');
+    switch (action) {
+      case 'go-home': state.screen = 'home'; state.error = null; render(); break;
+      case 'go-designer': state.screen = 'designerDashboard'; loadAllProjects(); break;
+      case 'go-client': state.screen = 'clientEnter'; state.error = null; render(); break;
+      case 'new-project': newProjectDraft = { name: '', svgRaw: null, fileName: '', error: null }; state.screen = 'designerNew'; state.error = null; render(); break;
+      case 'open-project': openDesignerDetail(actionEl.getAttribute('data-code')); break;
+      case 'back-dashboard': state.screen = 'designerDashboard'; loadAllProjects(); break;
+      case 'create-project': handleCreateProject(); break;
+      case 'copy-code': handleCopyCode(actionEl); break;
+      case 'view-client-project': handleViewClientProject(); break;
+      case 'reset-color': state.review.color = null; render(); break;
+      case 'swatch': state.review.color = actionEl.getAttribute('data-color'); render(); break;
+      case 'reset-font': state.review.font = null; render(); break;
+      case 'canvas-click': handleCanvasClick(e, actionEl); break;
+      case 'pin-click': handlePinClick(e, actionEl); break;
+      case 'marker-delete': handleMarkerDelete(actionEl.getAttribute('data-id')); break;
+      case 'marker-save': handleMarkerSave(); break;
+      case 'marker-cancel': state.review.pendingMarker = null; render(); break;
+      case 'decision-approve': submitDecision('approved'); break;
+      case 'decision-revise': submitDecision('revision'); break;
+    }
+  }
+
+  function handleAppChange(e) {
+    if (e.target.id === 'customColorInput') { state.review.color = e.target.value; render(); }
+    else if (e.target.id === 'fontSelect') { state.review.font = e.target.value === 'original' ? null : e.target.value; render(); }
+    else if (e.target.id === 'svgFileInput') { handleFileSelect(e); }
+  }
+
+  function handleAppInput(e) {
+    if (e.target.id === 'codeInput') {
+      e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+    }
+  }
+
+  APP.addEventListener('click', handleAppClick);
+  APP.addEventListener('change', handleAppChange);
+  APP.addEventListener('input', handleAppInput);
+  APP.addEventListener('keydown', function (e) {
+    if (e.target && e.target.id === 'codeInput' && e.key === 'Enter') handleViewClientProject();
+  });
+
+  render();
+</script>
 </body>
 </html>
