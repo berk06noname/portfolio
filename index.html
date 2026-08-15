@@ -173,7 +173,64 @@
 </head>
 <body>
 <div id="app"></div>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 <script>
+  // 1. Firebase Yapılandırmanız
+  var firebaseConfig = {
+    apiKey: "AIzaSyCGANLV5UaD_XL1qoTqyfLUg442RtmuwEk",
+    authDomain: "proof-studyo.firebaseapp.com",
+    projectId: "proof-studyo",
+    storageBucket: "proof-studyo.firebasestorage.app",
+    messagingSenderId: "694477119806",
+    appId: "1:694477119806:web:4f17a55f9abe5ce7878c6f",
+    measurementId: "G-YNR5R67HBT"
+  };
+
+  // 2. Firebase ve Firestore'u Başlatma
+  firebase.initializeApp(firebaseConfig);
+  var db = firebase.firestore();
+
+  // 3. Kodunuzu Firestore'a Bağlayan Adaptör
+  window.storage = {
+    get: async function(key) {
+      try {
+        var doc = await db.collection("projects").doc(key).get();
+        if (doc.exists) {
+          return { value: JSON.stringify(doc.data()) };
+        }
+        return null;
+      } catch (e) {
+        console.error("Firebase okuma hatası:", e);
+        return null;
+      }
+    },
+    set: async function(key, value) {
+      try {
+        var data = typeof value === 'string' ? JSON.parse(value) : value;
+        await db.collection("projects").doc(key).set(data);
+        return true;
+      } catch (e) {
+        console.error("Firebase yazma hatası:", e);
+        throw e;
+      }
+    },
+    list: async function(prefix) {
+      try {
+        var snapshot = await db.collection("projects").get();
+        var keys = [];
+        snapshot.forEach(function(doc) {
+          if (!prefix || doc.id.startsWith(prefix)) {
+            keys.push(doc.id);
+          }
+        });
+        return { keys: keys };
+      } catch (e) {
+        console.error("Firebase listeleme hatası:", e);
+        return { keys: [] };
+      }
+    }
+  };
   var APP = document.getElementById('app');
 
   var ICON_DESIGNER = '<svg viewBox="0 0 40 40" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 32 L28 12 L32 16 L12 36 Z"/><path d="M24 16 L28 20"/><path d="M8 32 L6 36 L10 34 Z"/></svg>';
