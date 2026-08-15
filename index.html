@@ -14,22 +14,23 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: #333333; 
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            padding: 15px;
+            padding: 20px;
         }
 
         .main-container {
             background-color: #ffffff;
             width: 100%;
-            max-width: 650px; 
+            max-width: 680px;
             padding: 24px;
             display: flex;
             flex-direction: column;
             gap: 18px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
         }
 
         .box {
@@ -94,7 +95,7 @@
         }
 
         .ps-picker-box.is-open {
-            height: auto; 
+            height: 440px; 
         }
 
         .ps-picker-header {
@@ -143,11 +144,13 @@
         .ps-picker-body {
             display: none;
             width: 100%;
+            height: 330px;
             padding: 16px;
             background-color: #f7f7f7;
             border-top: 2px solid #000000;
             flex-direction: column;
             gap: 16px;
+            flex-shrink: 0;
         }
 
         .ps-picker-box.is-open .ps-picker-body {
@@ -338,7 +341,7 @@
 </head>
 <body>
 
-    <div class="main-container">
+    <div class="main-container" id="mainContainer">
         
         <div class="box box-logo">
             <div class="logos-wrapper">
@@ -431,9 +434,27 @@
         let currentSaturation = 0;
         let currentBrightness = 0;
 
+        // Ekran ve içerik boyutunu okuyup body yüksekliğini akıllıca ayarlayan otomatik yapı
+        function checkScreenAndLayout() {
+            const body = document.body;
+            const container = document.getElementById('mainContainer');
+            
+            // Eğer içerik ekran yüksekliğinden büyükse body'yi esnek konuma getir
+            if (container.scrollHeight + 40 > window.innerHeight) {
+                body.style.alignItems = 'flex-start';
+            } else {
+                body.style.alignItems = 'center';
+            }
+        }
+
         psPickerToggle.addEventListener('click', function() {
             psPickerBox.classList.toggle('is-open');
+            // Panel açılıp kapanırken yükseklik değişimini anında hesapla
+            setTimeout(checkScreenAndLayout, 350);
         });
+
+        window.addEventListener('resize', checkScreenAndLayout);
+        window.addEventListener('load', checkScreenAndLayout);
 
         partButtons.forEach(btn => {
             btn.addEventListener('click', function() {
