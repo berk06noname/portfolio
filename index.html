@@ -84,7 +84,6 @@
   .project-row:hover { background:var(--paper); }
   .project-row-main { display:flex; flex-direction:column; gap:4px; }
   .project-name { font-weight:600; }
-  .project-code { font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink-soft); letter-spacing:.06em; }
   .project-row-meta { display:flex; align-items:center; gap:14px; }
   .project-date { font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink-soft); }
 
@@ -173,30 +172,22 @@
 </head>
 <body>
 <div id="app"></div>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 <script>
-  // 1. Firebase Yapılandırmanız
   var firebaseConfig = {
     apiKey: "AIzaSyCGANLV5UaD_XL1qoTqyfLUg442RtmuwEk",
     authDomain: "proof-studyo.firebaseapp.com",
     projectId: "proof-studyo",
     storageBucket: "proof-studyo.firebasestorage.app",
     messagingSenderId: "694477119806",
-    appId: "1:694477119806:web:4f17a55f9abe5ce7878c6f",
-    measurementId: "G-YNR5R67HBT"
+    appId: "1:694477119806:web:4f17a55f9abe5ce7878c6f"
   };
 
-  // 2. Firebase ve Firestore'u Başlatma
   firebase.initializeApp(firebaseConfig);
   var db = firebase.firestore();
-  
-  // 4 haneli rastgele şifre üreten fonksiyon
-  function generatePasscode() {
-    return Math.floor(1000 + Math.random() * 9000).toString();
-  }
 
-  // 3. Kodunuzu Firestore'a Bağlayan Adaptör
   window.storage = {
     get: async function(key) {
       try {
@@ -237,6 +228,7 @@
       }
     }
   };
+
   var APP = document.getElementById('app');
 
   var ICON_DESIGNER = '<svg viewBox="0 0 40 40" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 32 L28 12 L32 16 L12 36 Z"/><path d="M24 16 L28 20"/><path d="M8 32 L6 36 L10 34 Z"/></svg>';
@@ -252,7 +244,7 @@
     review: null
   };
 
-  var newProjectDraft = { name: '', svgRaw: null, fileName: '', error: null };
+  var newProjectDraft = { name: '', svgRaw: '', fileName: '', passcode: '', error: null };
 
   function esc(str) {
     if (str === null || str === undefined) return '';
@@ -266,19 +258,6 @@
     var code = '';
     for (var i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
     return code;
-  }
-
-  async function generateUniqueCode() {
-    for (var i = 0; i < 8; i++) {
-      var code = genCode();
-      try {
-        var existing = await window.storage.get('project:' + code, true);
-        if (!existing) return code;
-      } catch (e) {
-        return code;
-      }
-    }
-    return genCode() + Date.now().toString(36).slice(-2);
   }
 
   function sanitizeSvg(raw) {
@@ -401,7 +380,7 @@
     var projects = state.designerProjects || [];
     var rows = projects.map(function (p) {
       return '<button type="button" class="project-row" data-action="open-project" data-code="' + p.code + '">' +
-        '<span class="project-row-main"><span class="project-name">' + esc(p.name) + '</span><span class="project-code">' + p.code + '</span></span>' +
+        '<span class="project-row-main"><span class="project-name">' + esc(p.name) + '</span></span>' +
         '<span class="project-row-meta"><span class="project-date">' + formatDate(p.createdAt) + '</span>' + statusBadge(p.status) + '</span>' +
       '</button>';
     }).join('');
@@ -427,6 +406,8 @@
     '<div class="panel form-panel">' + corners() +
       '<label class="field-label" for="projectNameInput">Müşteri / Proje Adı</label>' +
       '<input type="text" id="projectNameInput" class="text-input" placeholder="Örn. Kahve Dükkanı A.Ş." value="' + esc(d.name || '') + '" />' +
+      '<label class="field-label" for="projectPassInput">Proje Şifresi (Panelde açmak için)</label>' +
+      '<input type="text" id="projectPassInput" class="text-input" placeholder="Örn. 1234" value="' + esc(d.passcode || '') + '" />' +
       '<label class="field-label">Logo Dosyası (.svg)</label>' +
       '<label class="dropzone" for="svgFileInput">' +
         '<input type="file" id="svgFileInput" accept=".svg,image/svg+xml" hidden />' +
@@ -471,7 +452,7 @@
       }
       out += '<p class="hint">Gönderim: ' + formatDate(fb.submittedAt) + '</p>';
     } else {
-      out += '<div class="panel empty-state">' + corners() + '<p>Müşteri henüz görüş bildirmedi.</p><p class="hint">Yukarıdaki kodu, bu artifact linkiyle birlikte müşterinize gönderin.</p></div>';
+      out += '<div class="panel empty-state">' + corners() + '<p>Müşteri henüz görüş bildirmedi.</p><p class="hint">Yukarıdaki kodu müşterinizle paylaşarak incelemesini sağlayabilirsiniz.</p></div>';
     }
     return out;
   }
@@ -559,16 +540,14 @@
     '</div>';
   }
 
-  // Tasarımcı panelinden bir projeye tıklandığında şifre sorma özelliği
   async function handleOpenDesignerProject(code) {
     try {
       var res = await window.storage.get('project:' + code);
       if (!res || !res.value) return;
       var project = JSON.parse(res.value);
 
-      // Tasarımcının şifreyi girmesini isteme
       if (project.passcode) {
-        var enteredPass = prompt("Bu projeyi açmak için giriş şifresini girin:");
+        var enteredPass = prompt("Bu projeyi açmak için şifreyi girin:");
         if (enteredPass !== project.passcode) {
           alert("Hatalı şifre!");
           return;
@@ -580,7 +559,7 @@
       state.screen = 'designerDetail';
       render();
     } catch (e) {
-      alert("Proje yüklenirken bir hata oluştu.");
+      alert("Proje yüklenirken hata oluştu.");
     }
   }
 
@@ -597,8 +576,7 @@
     APP.innerHTML = renderHeader() + '<main class="shell">' + content + '</main>';
   }
 
-  // Örnek tıklama olay yöneticisi (Event listener)
-  document.addEventListener('click', function(e) {
+  document.addEventListener('click', async function(e) {
     var target = e.target.closest('[data-action]');
     if (!target) return;
     var action = target.getAttribute('data-action');
@@ -606,11 +584,188 @@
     if (action === 'go-home') { state.screen = 'home'; render(); }
     else if (action === 'go-designer') { state.screen = 'designerDash'; loadDesignerProjects(); }
     else if (action === 'go-client') { state.screen = 'clientEnter'; render(); }
-    else if (action === 'new-project') { state.screen = 'designerNew'; render(); }
+    else if (action === 'new-project') {
+      newProjectDraft = { name: '', svgRaw: '', fileName: '', passcode: '', error: null };
+      state.screen = 'designerNew';
+      render();
+    }
     else if (action === 'back-dashboard') { state.screen = 'designerDash'; loadDesignerProjects(); }
     else if (action === 'open-project') {
       var code = target.getAttribute('data-code');
       handleOpenDesignerProject(code);
+    }
+    else if (action === 'create-project') {
+      var nameInput = document.getElementById('projectNameInput');
+      var passInput = document.getElementById('projectPassInput');
+      if (!nameInput || !nameInput.value.trim() || !newProjectDraft.svgRaw) {
+        newProjectDraft.error = "Lütfen proje adı ve geçerli bir SVG dosyası girin.";
+        render();
+        return;
+      }
+      state.loading = true;
+      render();
+      try {
+        var code = genCode();
+        var proj = {
+          code: code,
+          name: nameInput.value.trim(),
+          passcode: passInput ? passInput.value.trim() : '',
+          svgContent: newProjectDraft.svgRaw,
+          status: 'pending',
+          createdAt: Date.now(),
+          feedback: null
+        };
+        await window.storage.set('project:' + code, proj);
+        state.activeProject = proj;
+        state.activeCode = code;
+        state.screen = 'designerDetail';
+      } catch (err) {
+        newProjectDraft.error = "Kayıt oluşturulamadı.";
+      }
+      state.loading = false;
+      render();
+    }
+    else if (action === 'view-client-project') {
+      var codeInput = document.getElementById('codeInput');
+      if (!codeInput || !codeInput.value.trim()) return;
+      var code = codeInput.value.trim().toUpperCase();
+      state.loading = true;
+      render();
+      try {
+        var res = await window.storage.get('project:' + code);
+        if (res && res.value) {
+          var p = JSON.parse(res.value);
+          state.activeProject = p;
+          state.activeCode = code;
+          var fb = p.feedback || {};
+          state.review = {
+            color: fb.color || '',
+            font: fb.font || '',
+            markers: fb.markers ? JSON.parse(JSON.stringify(fb.markers)) : [],
+            hasText: detectHasText(p.svgContent),
+            pendingMarker: null
+          };
+          state.screen = 'clientReview';
+          state.error = null;
+        } else {
+          state.error = "Böyle bir kod bulunamadı.";
+        }
+      } catch (err) {
+        state.error = "Proje aranırken hata oluştu.";
+      }
+      state.loading = false;
+      render();
+    }
+    else if (action === 'swatch') {
+      var col = target.getAttribute('data-color');
+      state.review.color = col;
+      var customInp = document.getElementById('customColorInput');
+      if (customInp) customInp.value = col;
+      render();
+    }
+    else if (action === 'reset-color') {
+      state.review.color = '';
+      render();
+    }
+    else if (action === 'reset-font') {
+      state.review.font = '';
+      var sel = document.getElementById('fontSelect');
+      if (sel) sel.value = 'original';
+      render();
+    }
+    else if (action === 'canvas-click') {
+      if (state.review.pendingMarker) return;
+      var rect = target.getBoundingClientRect();
+      var x = ((e.clientX - rect.left) / rect.width) * 100;
+      var y = ((e.clientY - rect.top) / rect.height) * 100;
+      var nextId = state.review.markers.length ? Math.max.apply(null, state.review.markers.map(function(m){return m.id;})) + 1 : 1;
+      state.review.pendingMarker = { id: nextId, x: Math.round(x*10)/10, y: Math.round(y*10)/10, note: '' };
+      render();
+    }
+    else if (action === 'marker-cancel') {
+      state.review.pendingMarker = null;
+      render();
+    }
+    else if (action === 'marker-save') {
+      var noteInput = document.getElementById('markerNoteInput');
+      if (noteInput && state.review.pendingMarker) {
+        state.review.pendingMarker.note = noteInput.value.trim();
+        state.review.markers.push(state.review.pendingMarker);
+        state.review.pendingMarker = null;
+        render();
+      }
+    }
+    else if (action === 'marker-delete') {
+      var id = parseInt(target.getAttribute('data-id'), 10);
+      state.review.markers = state.review.markers.filter(function(m){ return m.id !== id; });
+      render();
+    }
+    else if (action === 'decision-approve' || action === 'decision-revise') {
+      var isApprove = action === 'decision-approve';
+      var commentBox = document.getElementById('generalComment');
+      var comment = commentBox ? commentBox.value.trim() : '';
+      state.loading = true;
+      render();
+      try {
+        var fbData = {
+          color: state.review.color,
+          font: state.review.font === 'original' ? '' : state.review.font,
+          markers: state.review.markers,
+          comment: comment,
+          submittedAt: Date.now()
+        };
+        state.activeProject.status = isApprove ? 'approved' : 'revision';
+        state.activeProject.feedback = fbData;
+        await window.storage.set('project:' + state.activeCode, state.activeProject);
+        state.screen = 'clientDone';
+      } catch (err) {
+        state.error = "Görüş kaydedilemedi.";
+      }
+      state.loading = false;
+      render();
+    }
+    else if (action === 'copy-code') {
+      var codeToCopy = target.getAttribute('data-code');
+      navigator.clipboard.writeText(codeToCopy).then(function() {
+        alert("Kod kopyalandı: " + codeToCopy);
+      });
+    }
+  });
+
+  document.addEventListener('change', function(e) {
+    if (e.target && e.target.id === 'svgFileInput') {
+      var file = e.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(evt) {
+        var raw = evt.target.result;
+        if (raw.indexOf('<svg') === -1) {
+          newProjectDraft.error = "Lütfen geçerli bir SVG dosyası yükleyin.";
+          newProjectDraft.svgRaw = '';
+          newProjectDraft.fileName = '';
+        } else {
+          newProjectDraft.svgRaw = sanitizeSvg(raw);
+          newProjectDraft.fileName = file.name;
+          newProjectDraft.error = null;
+        }
+        render();
+        // Aynı dosyanın tekrar seçilebilmesi için input değerini sıfırlıyoruz
+        e.target.value = '';
+      };
+      reader.readAsText(file);
+    }
+    if (e.target && e.target.id === 'customColorInput') {
+      if (state.review) {
+        state.review.color = e.target.value;
+        render();
+      }
+    }
+    if (e.target && e.target.id === 'fontSelect') {
+      if (state.review) {
+        var val = e.target.value;
+        state.review.font = val === 'original' ? '' : val;
+        render();
+      }
     }
   });
 
@@ -635,7 +790,6 @@
     render();
   }
 
-  // İlk açılış
   render();
 </script>
 </body>
