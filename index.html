@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mobil Logo Sunumu - Çoklu Yıldız & Illustrator Renk Çarkı</title>
+    <title>Mobil Logo Sunumu - Photoshop Renk Paneli</title>
     <style>
         /* Genel Sıfırlama */
         * {
@@ -94,8 +94,8 @@
             transform: scale(1.08) rotate(5deg);
         }
 
-        /* --- ADOBE ILLUSTRATOR TARZI YUVARLAK RENK ÇARKI --- */
-        .ai-wheel-box {
+        /* --- ADOBE PHOTOSHOP / ILLUSTRATOR RENK SEÇİCİ PANELİ --- */
+        .ps-picker-box {
             cursor: pointer;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
@@ -107,11 +107,11 @@
             justify-content: flex-start;
         }
 
-        .ai-wheel-box.is-open {
-            height: 290px; 
+        .ps-picker-box.is-open {
+            height: 260px; 
         }
 
-        .ai-wheel-header {
+        .ps-picker-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -120,99 +120,141 @@
             padding: 0 20px;
         }
 
-        .ai-wheel-header-left {
+        .ps-picker-header-left {
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        .color-wheel-graphic {
+        .color-preview-graphic {
             width: 42px;
             height: 42px;
-            border-radius: 50%;
-            /* Dereceleri kesin sabitlenmiş Illustrator renk çarkı önizlemesi */
-            background: conic-gradient(red 0deg, yellow 60deg, lime 120deg, cyan 180deg, blue 240deg, magenta 300deg, red 360deg);
+            border-radius: 6px;
+            background: #000;
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
             border: 2px solid #000;
         }
 
-        .ai-wheel-title {
+        .ps-picker-title {
             font-size: 1.1rem;
             font-weight: 600;
         }
 
-        .ai-wheel-arrow {
+        .ps-picker-arrow {
             font-size: 1.2rem;
             transition: transform 0.3s ease;
         }
 
-        .ai-wheel-box.is-open .ai-wheel-arrow {
+        .ps-picker-box.is-open .ps-picker-arrow {
             transform: rotate(180deg);
         }
 
-        /* Açılan Çark Alanı Gövdesi */
-        .ai-wheel-body {
+        /* Açılan Renk Seçici Gövdesi */
+        .ps-picker-body {
             display: none;
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             background-color: #f7f7f7;
             border-top: 2px solid #000000;
             align-items: center;
             justify-content: center;
-            flex-direction: column;
-            gap: 12px;
+            gap: 15px;
         }
 
-        .ai-wheel-box.is-open .ai-wheel-body {
+        .ps-picker-box.is-open .ps-picker-body {
             display: flex;
         }
 
-        /* Dereceleri Tam Sabitlenmiş Görsel ve Matematiksel Uyumlu Çark */
-        .css-color-wheel {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
+        /* 1. Soldaki Renk / Doygunluk Karesi */
+        .ps-color-square {
+            width: 150px;
+            height: 150px;
             position: relative;
             cursor: crosshair;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             border: 2px solid #333;
-            background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%),
-                        conic-gradient(red 0deg, yellow 60deg, lime 120deg, cyan 180deg, blue 240deg, magenta 300deg, red 360deg);
+            background: rgb(255, 0, 0); /* Dinamik değişecek */
             touch-action: none;
         }
 
-        /* Seçim İmleci Noktası */
-        .wheel-marker {
+        .ps-color-square::before {
+            content: '';
             position: absolute;
-            width: 12px;
-            height: 12px;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to right, #fff, rgba(255,255,255,0));
+            pointer-events: none;
+        }
+
+        .ps-color-square::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, transparent, #000);
+            pointer-events: none;
+        }
+
+        /* Kare İçi İmleç */
+        .square-marker {
+            position: absolute;
+            width: 10px;
+            height: 10px;
             border: 2px solid #fff;
-            background-color: #000;
+            background-color: transparent;
             border-radius: 50%;
             transform: translate(-50%, -50%);
             pointer-events: none;
-            box-shadow: 0 0 3px rgba(0,0,0,0.8);
-            top: 50%;
-            left: 50%;
+            box-shadow: 0 0 2px rgba(0,0,0,0.9);
+            top: 0;
+            left: 100%;
         }
 
-        /* Alt Değerler ve HEX Giriş Alanı */
-        .ai-wheel-info-row {
+        /* 2. Sağdaki Dikey Renk (Hue) Şeridi */
+        .ps-hue-slider {
+            width: 25px;
+            height: 150px;
+            position: relative;
+            cursor: pointer;
+            border: 2px solid #333;
+            background: linear-gradient(to bottom, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+            touch-action: none;
+        }
+
+        /* Şerit İçi İmleç */
+        .hue-marker {
+            position: absolute;
+            left: -4px;
+            right: -4px;
+            height: 6px;
+            background: #fff;
+            border: 1px solid #000;
+            transform: translateY(-50%);
+            pointer-events: none;
+            top: 0%;
+        }
+
+        /* Sağ Taraf HEX ve Bilgi Alanı */
+        .ps-info-col {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .ps-info-row {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 0.9rem;
+            gap: 6px;
+            font-size: 0.85rem;
             font-family: monospace;
             font-weight: 700;
             color: #333;
         }
 
-        .ai-hex-input-box {
+        .ps-hex-input {
             font-family: monospace;
             font-weight: 700;
-            font-size: 0.9rem;
-            width: 90px;
-            padding: 4px 6px;
+            font-size: 0.85rem;
+            width: 85px;
+            padding: 4px;
             border: 1px solid #999;
             background: #fff;
             text-align: center;
@@ -298,25 +340,33 @@
             </div>
         </div>
 
-        <!-- Adobe Illustrator Yuvarlak Renk Çarkı Alanı -->
-        <div class="box ai-wheel-box" id="aiWheelBox">
-            <div class="ai-wheel-header" id="aiWheelToggle">
-                <div class="ai-wheel-header-left">
-                    <div class="color-wheel-graphic"></div>
-                    <span class="ai-wheel-title">Adobe Renk Çarkı</span>
+        <!-- Photoshop / Illustrator Tarzı Renk Paneli -->
+        <div class="box ps-picker-box" id="psPickerBox">
+            <div class="ps-picker-header" id="psPickerToggle">
+                <div class="ps-picker-header-left">
+                    <div class="color-preview-graphic" id="headerColorPreview"></div>
+                    <span class="ps-picker-title">Renk Seç (Photoshop)</span>
                 </div>
-                <span class="ai-wheel-arrow">▼</span>
+                <span class="ps-picker-arrow">▼</span>
             </div>
 
-            <div class="ai-wheel-body">
-                <!-- Sürüklenebilir CSS Renk Çarkı -->
-                <div class="css-color-wheel" id="cssColorWheel">
-                    <div class="wheel-marker" id="wheelMarker"></div>
+            <div class="ps-picker-body">
+                <!-- Soldaki Kare Renk Matrisi -->
+                <div class="ps-color-square" id="psColorSquare">
+                    <div class="square-marker" id="squareMarker"></div>
                 </div>
+
+                <!-- Sağdaki Dikey Renk (Hue) Şeridi -->
+                <div class="ps-hue-slider" id="psHueSlider">
+                    <div class="hue-marker" id="hueMarker"></div>
+                </div>
+
                 <!-- HEX Giriş Alanı -->
-                <div class="ai-wheel-info-row">
-                    <span>HEX:</span>
-                    <input type="text" id="aiHexInputBox" class="ai-hex-input-box" value="#000000">
+                <div class="ps-info-col">
+                    <div class="ps-info-row">
+                        <span>HEX:</span>
+                        <input type="text" id="psHexInput" class="ps-hex-input" value="#000000">
+                    </div>
                 </div>
             </div>
         </div>
@@ -341,7 +391,7 @@
 
     </div>
 
-    <!-- Derece Bazlı Sabitlenmiş Renk Çarkı Kodları -->
+    <!-- Photoshop Renk Paneli Mantığı -->
     <script>
         const starContainers = document.querySelectorAll('.star-container');
         let activeStarContainer = document.querySelector('.star-container.selected');
@@ -357,17 +407,24 @@
         });
 
         // Panel Açma / Kapatma
-        const aiWheelBox = document.getElementById('aiWheelBox');
-        const aiWheelToggle = document.getElementById('aiWheelToggle');
+        const psPickerBox = document.getElementById('psPickerBox');
+        const psPickerToggle = document.getElementById('psPickerToggle');
 
-        aiWheelToggle.addEventListener('click', function() {
-            aiWheelBox.classList.toggle('is-open');
+        psPickerToggle.addEventListener('click', function() {
+            psPickerBox.classList.toggle('is-open');
         });
 
-        // Renk Çarkı ve Tam Uyumlu Açı Kodları
-        const cssColorWheel = document.getElementById('cssColorWheel');
-        const wheelMarker = document.getElementById('wheelMarker');
-        const aiHexInputBox = document.getElementById('aiHexInputBox');
+        // Renk Paneli Mantığı
+        const psColorSquare = document.getElementById('psColorSquare');
+        const squareMarker = document.getElementById('squareMarker');
+        const psHueSlider = document.getElementById('psHueSlider');
+        const hueMarker = document.getElementById('hueMarker');
+        const psHexInput = document.getElementById('psHexInput');
+        const headerColorPreview = document.getElementById('headerColorPreview');
+
+        let currentHue = 0;        // 0 - 360
+        let currentSaturation = 100; // 0 - 100
+        let currentBrightness = 100; // 0 - 100
 
         function hsvToRgb(h, s, v) {
             s /= 100;
@@ -395,82 +452,113 @@
             return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
         }
 
-        function applyColor(hex, updateInput = true) {
+        function updateColor(updateInput = true) {
+            let [r, g, b] = hsvToRgb(currentHue, currentSaturation, currentBrightness);
+            let hex = rgbToHex(r, g, b);
+
             if (updateInput) {
-                aiHexInputBox.value = hex;
+                psHexInput.value = hex;
             }
+            headerColorPreview.style.backgroundColor = hex;
+
             if (activeStarContainer) {
                 activeStarContainer.querySelector('.star-icon').setAttribute('fill', hex);
             }
+
+            // Kare arka planı için saf Hue rengi
+            let [pr, pg, pb] = hsvToRgb(currentHue, 100, 100);
+            psColorSquare.style.backgroundColor = `rgb(${pr}, ${pg}, ${pb})`;
         }
 
-        function updateColorFromCoordinates(clientX, clientY) {
-            const rect = cssColorWheel.getBoundingClientRect();
-            const radius = rect.width / 2;
-            let x = clientX - rect.left - radius;
-            let y = clientY - rect.top - radius;
-            let distance = Math.sqrt(x * x + y * y);
+        // Kare üzerinde sürükleme (Doygunluk ve Parlaklık)
+        function updateSquareFromCoords(clientX, clientY) {
+            const rect = psColorSquare.getBoundingClientRect();
+            let x = clientX - rect.left;
+            let y = clientY - rect.top;
 
-            if (distance > radius) {
-                x = (x / distance) * radius;
-                y = (y / distance) * radius;
-                distance = radius;
-            }
+            x = Math.max(0, Math.min(x, rect.width));
+            y = Math.max(0, Math.min(y, rect.height));
 
-            let angle = Math.atan2(y, x) * (180 / Math.PI);
-            if (angle < 0) angle += 360;
+            currentSaturation = (x / rect.width) * 100;
+            currentBrightness = 100 - (y / rect.height) * 100;
 
-            let saturation = (distance / radius) * 100;
-            let hue = angle; // Derece sabitlemesiyle birebir eşleşti
+            squareMarker.style.left = `${(x / rect.width) * 100}%`;
+            squareMarker.style.top = `${(y / rect.height) * 100}%`;
 
-            let [r, g, b] = hsvToRgb(hue, saturation, 100);
-            let hex = rgbToHex(r, g, b);
-
-            wheelMarker.style.left = `${((x + radius) / (radius * 2)) * 100}%`;
-            wheelMarker.style.top = `${((y + radius) / (radius * 2)) * 100}%`;
-
-            applyColor(hex, true);
+            updateColor(true);
         }
 
-        // Fare ile sürükleme olayları
-        let isDragging = false;
-
-        cssColorWheel.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            updateColorFromCoordinates(e.clientX, e.clientY);
+        let isDraggingSquare = false;
+        psColorSquare.addEventListener('mousedown', (e) => {
+            isDraggingSquare = true;
+            updateSquareFromCoords(e.clientX, e.clientY);
         });
-
         window.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            updateColorFromCoordinates(e.clientX, e.clientY);
+            if (!isDraggingSquare) return;
+            updateSquareFromCoords(e.clientX, e.clientY);
         });
+        window.addEventListener('mouseup', () => { isDraggingSquare = false; });
 
-        window.addEventListener('mouseup', () => {
-            isDragging = false;
-        });
-
-        // Mobil dokunma ile kaydırma/sürükleme olayları
-        cssColorWheel.addEventListener('touchstart', (e) => {
-            isDragging = true;
-            updateColorFromCoordinates(e.touches[0].clientX, e.touches[0].clientY);
+        psColorSquare.addEventListener('touchstart', (e) => {
+            isDraggingSquare = true;
+            updateSquareFromCoords(e.touches[0].clientX, e.touches[0].clientY);
         }, { passive: true });
-
         window.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-            updateColorFromCoordinates(e.touches[0].clientX, e.touches[0].clientY);
+            if (!isDraggingSquare) return;
+            updateSquareFromCoords(e.touches[0].clientX, e.touches[0].clientY);
         }, { passive: true });
+        window.addEventListener('touchend', () => { isDraggingSquare = false; });
 
-        window.addEventListener('touchend', () => {
-            isDragging = false;
+
+        // Dikey Şerit üzerinde sürükleme (Renk Tonu / Hue)
+        function updateHueFromCoords(clientY) {
+            const rect = psHueSlider.getBoundingClientRect();
+            let y = clientY - rect.top;
+            y = Math.max(0, Math.min(y, rect.height));
+
+            currentHue = (y / rect.height) * 360;
+            if (currentHue >= 360) currentHue = 359.9;
+
+            hueMarker.style.top = `${(y / rect.height) * 100}%`;
+
+            updateColor(true);
+        }
+
+        let isDraggingHue = false;
+        psHueSlider.addEventListener('mousedown', (e) => {
+            isDraggingHue = true;
+            updateHueFromCoords(e.clientY);
         });
+        window.addEventListener('mousemove', (e) => {
+            if (!isDraggingHue) return;
+            updateHueFromCoords(e.clientY);
+        });
+        window.addEventListener('mouseup', () => { isDraggingHue = false; });
 
-        // Manuel HEX input kutusuna yazı yazıldığında
-        aiHexInputBox.addEventListener('input', function() {
+        psHueSlider.addEventListener('touchstart', (e) => {
+            isDraggingHue = true;
+            updateHueFromCoords(e.touches[0].clientY);
+        }, { passive: true });
+        window.addEventListener('touchmove', (e) => {
+            if (!isDraggingHue) return;
+            updateHueFromCoords(e.touches[0].clientY);
+        }, { passive: true });
+        window.addEventListener('touchend', () => { isDraggingHue = false; });
+
+
+        // Manuel HEX giriş desteği
+        psHexInput.addEventListener('input', function() {
             let val = this.value.trim();
             if (/^#[0-9A-F]{6}$/i.test(val)) {
-                applyColor(val, false);
+                headerColorPreview.style.backgroundColor = val;
+                if (activeStarContainer) {
+                    activeStarContainer.querySelector('.star-icon').setAttribute('fill', val);
+                }
             }
         });
+
+        // Başlangıç renk güncellemesi
+        updateColor(true);
     </script>
 
 </body>
