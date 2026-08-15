@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mobil Logo Sunumu - İnteraktif</title>
+    <title>Mobil Logo Sunumu - Pro Etkileşim</title>
     <style>
         /* Genel Sıfırlama */
         * {
@@ -43,6 +43,8 @@
             color: #000000;
             width: 100%;
             background-color: #ffffff;
+            position: relative; /* İçeriklerin taşmasını önlemek için */
+            overflow: hidden;
         }
 
         .box-logo {
@@ -57,64 +59,65 @@
         #star-logo {
             width: 130px;
             height: 130px;
-            transition: fill 0.3s ease; /* Renk değişirken yumuşak geçiş yapar */
+            /* Renk geçişini çok daha yumuşak ve tatmin edici yaptık */
+            transition: fill 0.5s cubic-bezier(0.25, 1, 0.5, 1); 
         }
 
-        /* --- RENK PALETİ KUTUSU ÖZEL AYARLARI --- */
+        /* --- PRO RENK PALETİ ANİMASYONU --- */
         .color-box {
             cursor: pointer;
             user-select: none;
+            /* Dokunma hissini artırmak için */
+            -webkit-tap-highlight-color: transparent; 
         }
 
-        .circle {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-        }
-
-        /* Kapalı Haldeki Görünüm */
-        .initial-view {
+        /* Renklerin hizalandığı ana taşıyıcı */
+        .palette {
             display: flex;
-            width: 100%;
+            gap: 0; /* Kapalıyken aralarında boşluk yok */
             justify-content: center;
             align-items: center;
+            /* Flex gap (boşluk) değerine yaylanma efekti veriyoruz */
+            transition: gap 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        /* Açık Haldeki Görünüm */
-        .expanded-view {
-            display: none; /* Başlangıçta gizli */
-            width: 100%;
-            justify-content: center;
-            align-items: center;
-            padding: 0 10px;
+        /* Menü açıldığında aradaki boşluklar genişler */
+        .color-box.is-open .palette {
+            gap: 16px; 
         }
 
-        /* Javascript is-open class'ını eklediğinde görünümler değişir */
-        .color-box.is-open .initial-view {
-            display: none;
+        /* Squarcle (Yuvarlatılmış Kare) Tasarımı */
+        .color-swatch {
+            width: 0; /* Kapalıyken genişlik 0 (görünmez) */
+            height: 48px; /* Daha iyi dokunma alanı */
+            border-radius: 14px; /* İnsan beyninin sevdiği yumuşak köşe oranı */
+            opacity: 0;
+            transform: scale(0.3); /* Küçülerek kaybolma efekti */
+            /* Yaylanarak açılma animasyonu (Spring Physics) */
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: inset 0 0 0 2px rgba(0,0,0,0.08); /* Açık renklerde sınırları belli eden ince iç gölge */
+            border: 2px solid transparent;
         }
 
-        .color-box.is-open .expanded-view {
-            display: flex;
+        /* Seçili olan renk kapalıyken bile her zaman görünür ve merkezdedir */
+        .color-swatch.is-active {
+            width: 48px;
+            opacity: 1;
+            transform: scale(1);
+            border-color: rgba(0,0,0,0.15); /* Seçili olduğunu vurgulayan çok hafif bir çerçeve */
         }
 
-        .dashed-line {
-            width: 40px;
-            border-top: 3px dashed #000000;
-            margin: 0 15px;
+        /* Kutu tıklandığında (açıldığında) tüm renkler genişler ve görünür olur */
+        .color-box.is-open .color-swatch {
+            width: 48px;
+            opacity: 1;
+            transform: scale(1);
         }
 
-        .colors-group {
-            display: flex;
-            gap: 6px;
-        }
-
-        .color-option {
-            transition: transform 0.2s;
-        }
-
-        .color-option:hover {
-            transform: scale(1.15); /* Üzerine gelince hafif büyür */
+        /* Sadece açıkken üzerine gelince hafif havaya kalkma efekti */
+        .color-box.is-open .color-swatch:hover {
+            transform: scale(1.1) translateY(-4px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
         }
 
         /* En alttaki çözünürlük yazısı */
@@ -133,32 +136,22 @@
 
     <div class="mobile-container">
         
-        <!-- Logo Alanı (Kodla çizilmiş Yıldız SVG) -->
+        <!-- Logo Alanı -->
         <div class="box box-logo">
             <svg id="star-logo" viewBox="0 0 24 24" fill="#000000">
                 <path d="M12 .587l3.668 7.431 8.2 1.151-6.064 5.828 1.58 8.137L12 18.896l-7.384 3.882 1.58-8.137-6.064-5.828 8.2-1.151z"/>
             </svg>
         </div>
 
-        <!-- İnteraktif Renk Paleti Alanı -->
+        <!-- Pro İnteraktif Renk Paleti Alanı -->
         <div class="box box-standard color-box" id="colorBox">
-            
-            <!-- Palet Kapalıyken (Tek Renk) -->
-            <div class="initial-view">
-                <div class="circle" id="current-color-circle" style="background-color: #000000;"></div>
+            <div class="palette">
+                <!-- data-color içerisine renk kodları yazılır. is-active class'ı seçili olanı belirler. -->
+                <div class="color-swatch is-active" style="background-color: #000000;" data-color="#000000"></div>
+                <div class="color-swatch" style="background-color: #8C8080;" data-color="#8C8080"></div>
+                <div class="color-swatch" style="background-color: #E60000;" data-color="#E60000"></div>
+                <div class="color-swatch" style="background-color: #DDE21A;" data-color="#DDE21A"></div>
             </div>
-
-            <!-- Palet Açıkken (Tüm Renkler) -->
-            <div class="expanded-view">
-                <div class="circle color-option" style="background-color: #000000;" data-color="#000000"></div>
-                <div class="dashed-line"></div>
-                <div class="colors-group">
-                    <div class="circle color-option" style="background-color: #8C8080;" data-color="#8C8080"></div>
-                    <div class="circle color-option" style="background-color: #E60000;" data-color="#E60000"></div>
-                    <div class="circle color-option" style="background-color: #DDE21A;" data-color="#DDE21A"></div>
-                </div>
-            </div>
-
         </div>
 
         <!-- Tipografi Alanı -->
@@ -178,35 +171,40 @@
 
     </div>
 
-    <!-- Tıklama ve Renk Değiştirme Mantığı (Javascript) -->
+    <!-- Pürüzsüz Etkileşim Mantığı -->
     <script>
         const colorBox = document.getElementById('colorBox');
         const starLogo = document.getElementById('star-logo');
-        const currentCircle = document.getElementById('current-color-circle');
+        const swatches = document.querySelectorAll('.color-swatch');
 
         colorBox.addEventListener('click', function(event) {
+            // Tıklanan elementin bir renk kutusu olup olmadığını kontrol et
+            const clickedSwatch = event.target.closest('.color-swatch');
             
-            // Eğer tıklanan element bir 'color-option' (renk seçeneği) ise:
-            if (event.target.classList.contains('color-option')) {
-                
-                // Seçilen rengin kodunu al
-                const selectedColor = event.target.getAttribute('data-color');
-                
-                // Yıldızın rengini değiştir
-                starLogo.setAttribute('fill', selectedColor);
-                
-                // Kapalı durumdaki yuvarlağın rengini de seçilen renkle güncelle
-                currentCircle.style.backgroundColor = selectedColor;
-                
-                // Paleti kapat
+            // Eğer menü zaten açıksa ve bir renge tıklandıysa:
+            if (colorBox.classList.contains('is-open')) {
+                if (clickedSwatch) {
+                    // 1. Yıldızın rengini değiştir
+                    const selectedColor = clickedSwatch.getAttribute('data-color');
+                    starLogo.setAttribute('fill', selectedColor);
+                    
+                    // 2. Önceki seçili rengin aktifliğini kaldır, yenisine ekle
+                    swatches.forEach(s => s.classList.remove('is-active'));
+                    clickedSwatch.classList.add('is-active');
+                    
+                    // 3. Flexbox mantığı sayesinde menü kapandığında, 
+                    // sadece '.is-active' olan görünür kalır ve pürüzsüzce merkeze kayar.
+                }
+                // Menüyü kapat (diğer renkleri gizle)
                 colorBox.classList.remove('is-open');
-                
             } else {
-                // Renge tıklanmadıysa (kutunun boş bir yerine tıklandıysa) paleti aç/kapat
-                colorBox.classList.toggle('is-open');
+                // Menü kapalıysa aç (tüm renkleri göster)
+                colorBox.classList.add('is-open');
             }
         });
     </script>
 
+</body>
+</html>
 </body>
 </html>
